@@ -15,6 +15,7 @@ import { useLanguage } from "@/context/language"
 import { getAvatarColors, type LocalProject, useLayout } from "@/context/layout"
 import { useNotification } from "@/context/notification"
 import { usePermission } from "@/context/permission"
+import { useRoutePrefix } from "@/context/route-prefix"
 import { agentColor } from "@/utils/agent"
 import { sessionPermissionRequest } from "../session/composer/session-request-tree"
 import { hasProjectPermissions } from "./helpers"
@@ -98,9 +99,11 @@ const SessionRow = (props: {
   prefetchSession: (session: Session, priority?: "high" | "low") => void
   scheduleHoverPrefetch: () => void
   cancelHoverPrefetch: () => void
-}): JSX.Element => (
+}): JSX.Element => {
+  const prefix = useRoutePrefix()
+  return (
   <A
-    href={`/${props.slug}/session/${props.session.id}`}
+    href={`${prefix}/${props.slug}/session/${props.session.id}`}
     class={`flex items-center justify-between gap-3 min-w-0 text-left w-full focus:outline-none transition-[padding] ${props.mobile ? "pr-7" : ""} group-hover/session:pr-7 group-focus-within/session:pr-7 group-active/session:pr-7 ${props.dense ? "py-0.5" : "py-1"}`}
     onPointerEnter={props.scheduleHoverPrefetch}
     onPointerLeave={props.cancelHoverPrefetch}
@@ -138,7 +141,7 @@ const SessionRow = (props: {
       </span>
     </div>
   </A>
-)
+)}
 
 const SessionHoverPreview = (props: {
   mobile?: boolean
@@ -347,11 +350,12 @@ export const NewSessionItem = (props: {
 }): JSX.Element => {
   const layout = useLayout()
   const language = useLanguage()
+  const prefix = useRoutePrefix()
   const label = language.t("command.session.new")
   const tooltip = () => props.mobile || !props.sidebarExpanded()
   const item = (
     <A
-      href={`/${props.slug}/session`}
+      href={`${prefix}/${props.slug}/session`}
       end
       class={`flex items-center justify-between gap-3 min-w-0 text-left w-full focus:outline-none ${props.dense ? "py-0.5" : "py-1"}`}
       onClick={() => {

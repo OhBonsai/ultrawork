@@ -2,14 +2,14 @@ import { test, expect } from "../fixtures"
 import { serverNamePattern } from "../utils"
 
 test("home renders and shows core entrypoints", async ({ page }) => {
-  await page.goto("/")
+  await page.goto("/v1")
 
   await expect(page.getByRole("button", { name: "Open project" }).first()).toBeVisible()
   await expect(page.getByRole("button", { name: serverNamePattern })).toBeVisible()
 })
 
 test("server picker dialog opens from home", async ({ page }) => {
-  await page.goto("/")
+  await page.goto("/v1")
 
   const trigger = page.getByRole("button", { name: serverNamePattern })
   await expect(trigger).toBeVisible()

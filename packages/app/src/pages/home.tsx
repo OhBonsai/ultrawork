@@ -13,6 +13,7 @@ import { DialogSelectServer } from "@/components/dialog-select-server"
 import { useServer } from "@/context/server"
 import { useGlobalSync } from "@/context/global-sync"
 import { useLanguage } from "@/context/language"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 export default function Home() {
   const sync = useGlobalSync()
@@ -20,6 +21,7 @@ export default function Home() {
   const platform = usePlatform()
   const dialog = useDialog()
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const server = useServer()
   const language = useLanguage()
   const homedir = createMemo(() => sync.data.path.home)
@@ -40,7 +42,7 @@ export default function Home() {
   function openProject(directory: string) {
     layout.projects.open(directory)
     server.projects.touch(directory)
-    navigate(`/${base64Encode(directory)}`)
+    navigate(`${prefix}/${base64Encode(directory)}`)
   }
 
   async function chooseProject() {

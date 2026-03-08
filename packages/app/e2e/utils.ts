@@ -49,7 +49,7 @@ export function dirSlug(directory: string) {
 }
 
 export function dirPath(directory: string) {
-  return `/${dirSlug(directory)}`
+  return `/v1/${dirSlug(directory)}`
 }
 
 export function sessionPath(directory: string, sessionID?: string) {

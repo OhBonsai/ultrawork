@@ -16,6 +16,7 @@ import { normalizeServerUrl, ServerConnection, useServer } from "@/context/serve
 import { useSync } from "@/context/sync"
 import { checkServerHealth, type ServerHealth } from "@/utils/server-health"
 import { DialogSelectServer } from "./dialog-select-server"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 const pollMs = 10_000
 
@@ -167,6 +168,7 @@ export function StatusPopover() {
   const dialog = useDialog()
   const language = useLanguage()
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
 
   const fetcher = platform.fetch ?? globalThis.fetch
   const servers = createMemo(() => {
@@ -270,7 +272,7 @@ export function StatusPopover() {
                         onClick={() => {
                           if (isBlocked()) return
                           server.setActive(key)
-                          navigate("/")
+                          navigate(`${prefix}/`)
                         }}
                       >
                         <ServerHealthIndicator health={health[key]} />

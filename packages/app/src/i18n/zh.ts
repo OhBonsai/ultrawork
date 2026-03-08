@@ -864,4 +864,11 @@ export const dict = {
   "settingsV2.popover.help": "帮助文档",
   "settingsV2.popover.about": "关于我们",
   "settingsV2.popover.comingSoon": "即将上线",
+
+  "settingsV2.workspace.title": "工作目录配置",
+  "settingsV2.workspace.tab.directories": "目录列表",
+  "settingsV2.workspace.tab.environment": "环境配置",
+  "settingsV2.workspace.description": "管理您的工作目录",
+  "settingsV2.workspace.addDirectory": "添加目录",
+  "settingsV2.workspace.empty": "暂无工作目录",
 } satisfies Partial<Record<Keys, string>>

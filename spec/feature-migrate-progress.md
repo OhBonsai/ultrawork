@@ -158,9 +158,9 @@
 
 | 改动 | 文件 | 状态 |
 |------|------|------|
-| Popover「工作目录」点击打开工作目录设置 | `settings-popover.tsx` | ⬜ |
-| 工作目录管理弹窗（列表 + 添加 / 移除 / 切换） | `dialog-workspace.tsx`（新文件） | ⬜ |
-| i18n 国际化 | `i18n/*.ts` | ⬜ |
+| Popover「工作目录」点击打开工作目录设置 | `settings-popover.tsx` | ✅ |
+| 工作目录管理弹窗（列表 + 添加 / 移除 / 编辑） | `dialog-workspace.tsx`（新文件） | ✅ |
+| i18n 国际化 | `i18n/*.ts` | ✅ |
 | e2e 测试 | `e2e/v2/settings-workspace.spec.ts` | ⬜ |
 
 ### 1D-P 模型（供应商）设置

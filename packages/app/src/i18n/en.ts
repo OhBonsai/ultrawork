@@ -887,4 +887,11 @@ export const dict = {
   "settingsV2.popover.help": "Help docs",
   "settingsV2.popover.about": "About us",
   "settingsV2.popover.comingSoon": "Coming soon",
+
+  "settingsV2.workspace.title": "Workspace Configuration",
+  "settingsV2.workspace.tab.directories": "Directories",
+  "settingsV2.workspace.tab.environment": "Environment",
+  "settingsV2.workspace.description": "Manage your workspaces",
+  "settingsV2.workspace.addDirectory": "Add directory",
+  "settingsV2.workspace.empty": "No workspaces configured yet",
 }

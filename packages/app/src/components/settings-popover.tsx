@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/language"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { DialogSettings } from "./dialog-settings_v2"
 import { DialogComingSoon } from "./dialog-coming-soon"
+import { DialogWorkspace } from "./dialog-workspace"
 
 interface SettingsPopoverProps {
   trigger: JSXElement
@@ -33,6 +34,11 @@ export const SettingsPopover: Component<SettingsPopoverProps> = (props) => {
     dialog.show(() => <DialogSettings />)
   }
 
+  const openWorkspace = () => {
+    props.onOpenChange(false)
+    dialog.show(() => <DialogWorkspace />)
+  }
+
   const showComingSoon = (titleKey: string) => () => {
     props.onOpenChange(false)
     dialog.show(() => <DialogComingSoon title={language.t(titleKey as any)} />)
@@ -58,7 +64,7 @@ export const SettingsPopover: Component<SettingsPopoverProps> = (props) => {
       icon: "folder",
       labelKey: "settingsV2.popover.workspace",
       hasChevron: true,
-      action: showComingSoon("settingsV2.popover.workspace"),
+      action: openWorkspace,
     },
     {
       id: "providers",

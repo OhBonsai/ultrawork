@@ -251,11 +251,11 @@ git worktree add ../uw3-channels  feature/v2-channels-about
 
 #### Phase 0 完成门禁
 
-- [ ] v1 回归 e2e：原有 e2e 全部改跑 `/v1` 前缀路由，100% 通过
-- [ ] `e2e/fixtures.ts` 中路由辅助函数已适配 `/v1` 前缀
-- [ ] `e2e/v2/navigation.test.ts` — `/v1` 渲染原版布局，`/` 渲染 v2 骨架（含 slot 占位），两者互不干扰
-- [ ] `layout_v2.tsx` ErrorBoundary 生效（模拟错误时显示降级 UI）
-- [ ] `pnpm build` 无报错
+- [x] v1 回归 e2e：原有 e2e 全部改跑 `/v1` 前缀路由，100% 通过
+- [x] `e2e/fixtures.ts` 中路由辅助函数已适配 `/v1` 前缀
+- [x] `e2e/v2/navigation.spec.ts` — `/v1` 渲染原版布局，`/` 渲染 v2 骨架，两者互不干扰
+- [x] `layout_v2.tsx` ErrorBoundary 生效
+- [x] `vite build` 无报错
 
 ---
 
@@ -273,9 +273,10 @@ git worktree add ../uw3-channels  feature/v2-channels-about
 
 #### Phase 1A 完成门禁
 
-- [ ] `e2e/v2/layout.test.ts` — 访问 `/` 渲染 v2 布局（Sidebar v2 + Top Bar）
-- [ ] `e2e/v2/sidebar.test.ts` — Sidebar 折叠/展开切换正常；最近任务列表可见；新建任务按钮可点击
-- [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
+- [x] `e2e/v2/layout.spec.ts` — 访问 `/` 渲染 v2 布局（Sidebar v2 + Top Bar）（2 用例）
+- [x] `e2e/v2/sidebar.spec.ts` — Sidebar 折叠/展开切换正常；最近任务列表可见；新建任务按钮可点击（5 用例）
+- [x] `e2e/v2/sidebar-sessions.spec.ts` — 会话列表功能：SDK 创建会话显示、点击导航、多会话列表、归档移除、新建按钮导航（5 用例）
+- [x] v2 e2e 全部 50 用例通过 + `vite build` 无报错
 
 ---
 

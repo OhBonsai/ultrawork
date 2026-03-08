@@ -387,12 +387,31 @@ type ArtifactStore = {
 | 能力配置 Tab | **占位 UI**：同上 |
 | Providers/Models | 从 Tab 移至 Settings Popover 的弹窗入口，复用现有 `dialog-settings.tsx` 中的 Providers/Models 逻辑 |
 
+#### 1D-W 工作目录设置（Workspace）
+
+> 从 Popover 菜单的「工作目录」入口进入，管理本地工作目录列表。
+
+| 改动 | 文件 | 说明 |
+|------|------|------|
+| Popover 入口对接 | `settings-popover.tsx` | 点击「工作目录」打开工作目录管理弹窗（替换 Coming Soon） |
+| 工作目录管理弹窗 | → `dialog-workspace.tsx`（新文件） | 显示已配置的目录列表；支持添加（文件夹选择器）/ 移除 / 设为默认；数据源复用现有 `server` store 中的 projects 结构 |
+| i18n | `i18n/*.ts` | 新增工作目录相关文案 key |
+
+#### 1D-P 模型（供应商）设置（Providers & Models）
+
+> 从 Popover 菜单的「模型（供应商）」入口进入，复用现有 Providers / Models 功能。
+
+| 改动 | 文件 | 说明 |
+|------|------|------|
+| Popover 入口对接 | `settings-popover.tsx` | 点击「模型（供应商）」打开供应商管理弹窗（替换 Coming Soon） |
+| 模型供应商弹窗 | → `dialog-providers.tsx`（新文件或复用 `dialog-settings.tsx` 中的 Providers/Models Tab） | 展示 Provider 列表 + 启用/禁用切换 + 配置 API Key / OAuth；模型列表 + 可见性切换。复用现有 `DialogConnectProvider`、`DialogCustomProvider` 等组件 |
+| i18n | `i18n/*.ts` | 新增或复用供应商/模型相关文案 key |
+
 #### Phase 1D 完成门禁
 
-- [ ] `e2e/v2/user-profile.test.ts` — Sidebar 底部显示用户头像+昵称；点击弹出 Settings Popover
-- [ ] `e2e/v2/settings-popover.test.ts` — Popover 菜单项可见可点击；语言切换级联菜单正常
-- [ ] `e2e/v2/settings-general.test.ts` — 设置页 → 通用 Tab：全称/昵称可编辑保存；主题切换生效
-- [ ] `e2e/v2/settings-model.test.ts` — 模型供应商弹窗可打开；Provider 列表可见；启用/禁用切换正常
+- [x] `e2e/v2/settings-popover.spec.ts` — Popover 菜单项 + 语言切换（右侧面板）+ Tab 切换 + 外观设置联动（20 用例）
+- [ ] `e2e/v2/settings-workspace.spec.ts` — 工作目录管理弹窗可打开；目录列表可见；添加/移除操作正常
+- [ ] `e2e/v2/settings-providers.spec.ts` — 模型供应商弹窗可打开；Provider 列表可见；启用/禁用切换正常
 - [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
 
 ---
@@ -560,7 +579,10 @@ type ArtifactStore = {
 | `src/pages/layout/sidebar-scheduled-tasks.tsx` | 新增 | 2.1 | 定时任务列表组件 |
 | `src/pages/layout/sidebar-user-profile.tsx` | 新增 | 1D | 底部用户头像 + Popover |
 | `src/context/artifact.ts` | 新增 | 1C | Artifact store（`createStore<ArtifactStore>`） |
-| `src/components/settings-popover.tsx` | 新增 | 1D | 快捷设置菜单 |
+| `src/components/settings-popover.tsx` | 新增 | 1D | 快捷设置菜单（含右侧语言二级面板） |
+| `src/components/dialog-coming-soon.tsx` | 新增 | 1D | 未实现功能占位弹窗 |
+| `src/components/dialog-workspace.tsx` | 新增 | 1D-W | 工作目录管理弹窗 |
+| `src/components/dialog-providers.tsx` | 新增 | 1D-P | 模型供应商管理弹窗（复用现有 Provider/Model 逻辑） |
 | `src/components/artifact-preview.tsx` | 新增 | 1C | 多格式产物预览器 |
 | `src/components/artifact-list.tsx` | 新增 | 1C | 产物列表面板 |
 | `src/components/add-menu.tsx` | 新增 | 1B | `+` 按钮菜单（Phase 1B 仅附件；Phase 2.2 扩展 MCP/Skills/Plugins） |

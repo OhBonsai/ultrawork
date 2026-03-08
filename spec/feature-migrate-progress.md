@@ -2,7 +2,7 @@
 
 > 对应方案文档：[feature-migrate-v2.md](./feature-migrate-v2.md)
 >
-> 更新时间：2026-03-08
+> 更新时间：2026-03-09
 
 ---
 
@@ -14,7 +14,9 @@
 | **1A**  | Sidebar 重构                | ⬜ 未开始  | `feature/v2-sidebar`     |
 | **1B**  | Home 视图改造                 | ⬜ 未开始  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
-| **1D**  | 用户 Profile + Settings 壳   | ⬜ 未开始  | `feature/v2-settings`    |
+| **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
+| **1D-W** | 工作目录设置                  | 🟡 进行中  | `feature/v2-settings`    |
+| **1D-P** | 模型（供应商）设置              | 🟡 进行中  | `feature/v2-settings`    |
 | **2.1** | 定时任务                      | ⬜ 未开始  | —                        |
 | **2.2** | MCP / Skills / Plugins 开关 | ⬜ 未开始  | —                        |
 | **2.3** | 消息通道（钉钉）                  | ⬜ 未开始  | —                        |
@@ -134,26 +136,48 @@
 
 ## Phase 1D：用户 Profile + Settings 壳
 
-**分支**：`feature/v2-settings` ｜ **依赖**：Phase 0 ｜ **状态**：⬜ 未开始
+**分支**：`feature/v2-settings` ｜ **依赖**：Phase 0 ｜ **状态**：🟡 进行中
 
-### 改动清单
+### 1D.0 基础 UI 壳
 
 | 改动 | 文件 | 状态 |
 |------|------|------|
-| User Model（本地存储） | — | ⬜ |
-| 左下角用户区 | `sidebar-user-profile.tsx` | ⬜ |
-| Settings Popover | `settings-popover.tsx` | ⬜ |
-| Settings Tab 重组（通用 / 隐私占位 / 能力配置占位） | `dialog-settings_v2.tsx` | ⬜ |
-| 通用设置（个人资料 + 通知） | `settings-general.tsx` | ⬜ |
-| 隐私 / 能力配置占位 UI | `settings-privacy.tsx`, `settings-capabilities.tsx` | ⬜ |
+| User Model（本地存储） | `context/user-profile.tsx` | ✅ |
+| 左下角用户区 | `sidebar-user-profile.tsx` | ✅ |
+| Settings Popover（含右侧语言二级面板） | `settings-popover.tsx` | ✅ |
+| Settings Tab 重组（通用 / 隐私占位 / 能力配置占位） | `dialog-settings_v2.tsx` | ✅ |
+| 通用设置（个人资料 + 通知） | `settings-general_v2.tsx` | ✅ |
+| 隐私 / 能力配置占位 UI | `settings-privacy.tsx`, `settings-capabilities.tsx` | ✅ |
+| Coming Soon 弹窗 | `dialog-coming-soon.tsx` | ✅ |
+| i18n 国际化（全部 17 个 locale） | `i18n/*.ts` | ✅ |
+| UserProfileProvider 注册 | `app.tsx` | ✅ |
+| layout_v2 集成 UserSlot | `layout_v2.tsx` | ✅ |
+| e2e 测试（popover + 语言切换 + tab + 外观） | `e2e/v2/settings-popover.spec.ts` | ✅ |
+
+### 1D-W 工作目录设置
+
+| 改动 | 文件 | 状态 |
+|------|------|------|
+| Popover「工作目录」点击打开工作目录设置 | `settings-popover.tsx` | ⬜ |
+| 工作目录管理弹窗（列表 + 添加 / 移除 / 切换） | `dialog-workspace.tsx`（新文件） | ⬜ |
+| i18n 国际化 | `i18n/*.ts` | ⬜ |
+| e2e 测试 | `e2e/v2/settings-workspace.spec.ts` | ⬜ |
+
+### 1D-P 模型（供应商）设置
+
+| 改动 | 文件 | 状态 |
+|------|------|------|
+| Popover「模型（供应商）」点击打开供应商/模型管理 | `settings-popover.tsx` | ⬜ |
+| 模型供应商弹窗（复用现有 Providers/Models 逻辑） | `dialog-providers.tsx`（新文件或复用） | ⬜ |
+| i18n 国际化 | `i18n/*.ts` | ⬜ |
+| e2e 测试 | `e2e/v2/settings-providers.spec.ts` | ⬜ |
 
 ### 完成门禁
 
-- [ ] `e2e/v2/user-profile.test.ts` — 头像+昵称、Settings Popover
-- [ ] `e2e/v2/settings-popover.test.ts` — 菜单项、语言切换
-- [ ] `e2e/v2/settings-general.test.ts` — 全称/昵称编辑、主题切换
-- [ ] `e2e/v2/settings-model.test.ts` — 模型供应商弹窗
-- [ ] v1 回归 e2e 通过 + typecheck 无报错
+- [x] `e2e/v2/settings-popover.spec.ts` — Popover 菜单项、语言切换、Tab 切换、外观设置（20 用例）
+- [ ] `e2e/v2/settings-workspace.spec.ts` — 工作目录管理弹窗
+- [ ] `e2e/v2/settings-providers.spec.ts` — 模型供应商弹窗
+- [x] typecheck 无报错
 
 ---
 
@@ -191,4 +215,9 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1D 扩展范围：新增 1D-W（工作目录设置）和 1D-P（模型供应商设置）子阶段，同一分支继续开发 |
+| 2026-03-09 | Phase 1D e2e 完成：settings-popover.spec.ts 20 个用例覆盖 popover 菜单、语言切换（含 overflow/持久化/多语言验证）、Tab 切换、外观设置联动 |
+| 2026-03-09 | Settings Popover 语言子面板重构：hover 浮窗 → 点击展开右侧内联面板（overflow-hidden + max-h 滚动），修复溢出和背景透明问题 |
+| 2026-03-08 | i18n 扩展至全部 17 个 locale，修复非 en/zh 语言切换后 UI 不更新的 bug |
+| 2026-03-08 | Phase 1D 代码实现完成：User Model + sidebar-user-profile + settings-popover + dialog-settings_v2（Tab 重组） + settings-general_v2（含 Profile） + privacy/capabilities 占位 + i18n(en/zh) + layout_v2 集成 |
 | 2026-03-08 | Phase 0 代码实现完成（路由双版本、v2 骨架、route-prefix、e2e 适配），待人工验证和 e2e 回归 |

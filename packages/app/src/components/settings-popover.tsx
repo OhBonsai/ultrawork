@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/language"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { DialogSettings } from "./dialog-settings_v2"
 import { DialogComingSoon } from "./dialog-coming-soon"
+import { DialogProviderModels } from "./dialog-provider-models"
 
 interface SettingsPopoverProps {
   trigger: JSXElement
@@ -31,6 +32,11 @@ export const SettingsPopover: Component<SettingsPopoverProps> = (props) => {
   const openSettings = () => {
     props.onOpenChange(false)
     dialog.show(() => <DialogSettings />)
+  }
+
+  const openProviderModels = () => {
+    props.onOpenChange(false)
+    dialog.show(() => <DialogProviderModels />)
   }
 
   const showComingSoon = (titleKey: string) => () => {
@@ -65,7 +71,7 @@ export const SettingsPopover: Component<SettingsPopoverProps> = (props) => {
       icon: "models",
       labelKey: "settingsV2.popover.providers",
       hasChevron: true,
-      action: showComingSoon("settingsV2.popover.providers"),
+      action: openProviderModels,
     },
     {
       id: "channels",

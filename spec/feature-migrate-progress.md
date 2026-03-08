@@ -16,7 +16,7 @@
 | **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
 | **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
 | **1D-W** | 工作目录设置                  | 🟡 进行中  | `feature/v2-settings`    |
-| **1D-P** | 模型（供应商）设置              | 🟡 进行中  | `feature/v2-settings`    |
+| **1D-P** | 模型（供应商）设置              | ✅ 完成  | `feature/v2-settings`    |
 | **2.1** | 定时任务                      | ⬜ 未开始  | —                        |
 | **2.2** | MCP / Skills / Plugins 开关 | ⬜ 未开始  | —                        |
 | **2.3** | 消息通道（钉钉）                  | ⬜ 未开始  | —                        |
@@ -152,7 +152,7 @@
 | i18n 国际化（全部 17 个 locale） | `i18n/*.ts` | ✅ |
 | UserProfileProvider 注册 | `app.tsx` | ✅ |
 | layout_v2 集成 UserSlot | `layout_v2.tsx` | ✅ |
-| e2e 测试（popover + 语言切换 + tab + 外观） | `e2e/v2/settings-popover.spec.ts` | ✅ |
+| e2e 测试（popover + 语言 + tab + 外观 + providers） | `e2e/v2/settings/*.spec.ts`（4 文件 28 用例） | ✅ |
 
 ### 1D-W 工作目录设置
 
@@ -167,16 +167,18 @@
 
 | 改动 | 文件 | 状态 |
 |------|------|------|
-| Popover「模型（供应商）」点击打开供应商/模型管理 | `settings-popover.tsx` | ⬜ |
-| 模型供应商弹窗（复用现有 Providers/Models 逻辑） | `dialog-providers.tsx`（新文件或复用） | ⬜ |
-| i18n 国际化 | `i18n/*.ts` | ⬜ |
-| e2e 测试 | `e2e/v2/settings-providers.spec.ts` | ⬜ |
+| Popover「模型（供应商）」点击打开供应商/模型管理 | `settings-popover.tsx` | ✅ |
+| 模型供应商弹窗（复用现有 Providers/Models 逻辑） | `dialog-provider-models.tsx` | ✅ |
+| i18n 国际化（复用现有 Provider/Model key） | `i18n/*.ts` | ✅ |
+| e2e 测试 | `e2e/v2/settings/providers.spec.ts` | ✅ |
 
 ### 完成门禁
 
-- [x] `e2e/v2/settings-popover.spec.ts` — Popover 菜单项、语言切换、Tab 切换、外观设置（20 用例）
-- [ ] `e2e/v2/settings-workspace.spec.ts` — 工作目录管理弹窗
-- [ ] `e2e/v2/settings-providers.spec.ts` — 模型供应商弹窗
+- [x] `e2e/v2/settings/popover.spec.ts` — Popover 菜单项（4 用例）
+- [x] `e2e/v2/settings/language.spec.ts` — 语言切换（含 overflow/持久化/dialog 联动，10 用例）
+- [x] `e2e/v2/settings/general.spec.ts` — Tab 切换 + 外观设置（8 用例）
+- [x] `e2e/v2/settings/providers.spec.ts` — 模型供应商弹窗（6 用例）
+- [ ] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗
 - [x] typecheck 无报错
 
 ---
@@ -215,6 +217,8 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1D-P 完成：Popover「模型（供应商）」对接 DialogProviderModels（复用 v1 Providers/Models），e2e 6 用例通过 |
+| 2026-03-09 | e2e 测试重组：`settings-popover.spec.ts` 拆分为 `e2e/v2/settings/` 目录下 4 个文件（popover/language/general/providers），共 28 用例，4 worker 并行 |
 | 2026-03-09 | Phase 1D 扩展范围：新增 1D-W（工作目录设置）和 1D-P（模型供应商设置）子阶段，同一分支继续开发 |
 | 2026-03-09 | Phase 1D e2e 完成：settings-popover.spec.ts 20 个用例覆盖 popover 菜单、语言切换（含 overflow/持久化/多语言验证）、Tab 切换、外观设置联动 |
 | 2026-03-09 | Settings Popover 语言子面板重构：hover 浮窗 → 点击展开右侧内联面板（overflow-hidden + max-h 滚动），修复溢出和背景透明问题 |

@@ -1,13 +1,14 @@
 #!/usr/bin/env bun
 import { $ } from "bun"
+import * as path from "node:path"
 
-import { Script } from "@opencode-ai/script"
 import { copyBinaryToSidecarFolder, getCurrentSidecar, windowsify } from "./utils"
 
+const rootPkg = await Bun.file(path.resolve(import.meta.dirname, "../../../package.json")).json()
 const pkg = await Bun.file("./package.json").json()
-pkg.version = Script.version
+pkg.version = rootPkg.version
 await Bun.write("./package.json", JSON.stringify(pkg, null, 2) + "\n")
-console.log(`Updated package.json version to ${Script.version}`)
+console.log(`Updated package.json version to ${rootPkg.version}`)
 
 const sidecarConfig = getCurrentSidecar()
 

@@ -50,7 +50,7 @@ jobs:
 
       - run: bun install
 
-      - name: Download opencode sidecar
+      - name: Download CLI sidecar
         working-directory: packages/desktop
         run: bun ./scripts/predev.ts
 

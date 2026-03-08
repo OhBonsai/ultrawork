@@ -92,7 +92,7 @@ jobs:
         if: steps.check.outputs.skip != 'true'
         run: bun install
 
-      - name: Download opencode sidecar
+      - name: Download CLI sidecar
         if: steps.check.outputs.skip != 'true'
         working-directory: packages/desktop
         shell: bash

@@ -37,7 +37,6 @@ if (doNpm) {
     "packages/app/node_modules",
     "packages/ui/node_modules",
     "packages/util/node_modules",
-    "packages/sdk/node_modules",
   ]) {
     remove(path.join(ROOT, p))
   }

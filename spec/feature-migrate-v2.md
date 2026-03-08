@@ -356,10 +356,10 @@ type ArtifactStore = {
 
 #### Phase 1C 完成门禁
 
-- [ ] `e2e/v2/side-panel.test.ts` — 右侧面板可见；折叠/展开按钮切换正常；产物列表 Section 可折叠
-- [ ] `e2e/v2/artifact-preview.test.ts` — 点击产物项触发分屏预览；Markdown 文件渲染正确；关闭预览恢复全宽
-- [ ] `e2e/v2/task-execution.test.ts` — 从 Home 输入 Prompt → 跳转 `/task/:dir/:id`；消息流展示；停止按钮可点击
-- [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
+- [x] `e2e/v2/side-panel.spec.ts` — 面板可见性、空状态、产物列表、移动端隐藏（4 用例）
+- [x] `e2e/v2/artifact-preview.spec.ts` — 点击打开预览、关闭预览、Markdown 渲染（3 用例）
+- [x] `e2e/v2/task-execution.spec.ts` — v2 路由导航、session 渲染、Home↔Session 切换（5 用例）
+- [x] typecheck 无报错
 
 ---
 

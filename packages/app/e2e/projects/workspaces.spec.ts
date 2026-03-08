@@ -115,7 +115,7 @@ test("non-git projects keep workspace mode disabled", async ({ page, withProject
 
   try {
     await withProject(async () => {
-      await page.goto(`/${nonGitSlug}/session`)
+      await page.goto(`/v1/${nonGitSlug}/session`)
 
       await expect.poll(() => slugFromUrl(page.url()), { timeout: 30_000 }).not.toBe("")
 

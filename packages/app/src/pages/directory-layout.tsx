@@ -5,6 +5,7 @@ import { SDKProvider } from "@/context/sdk"
 import { SyncProvider, useSync } from "@/context/sync"
 import { LocalProvider } from "@/context/local"
 import { useGlobalSDK } from "@/context/global-sdk"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 import { DataProvider } from "@opencode-ai/ui/context"
 import { base64Encode } from "@opencode-ai/util/encode"
@@ -15,13 +16,14 @@ function DirectoryDataProvider(props: ParentProps<{ directory: string }>) {
   const navigate = useNavigate()
   const sync = useSync()
   const slug = createMemo(() => base64Encode(props.directory))
+  const prefix = useRoutePrefix()
 
   return (
     <DataProvider
       data={sync.data}
       directory={props.directory}
-      onNavigateToSession={(sessionID: string) => navigate(`/${slug()}/session/${sessionID}`)}
-      onSessionHref={(sessionID: string) => `/${slug()}/session/${sessionID}`}
+      onNavigateToSession={(sessionID: string) => navigate(`${prefix}/${slug()}/session/${sessionID}`)}
+      onSessionHref={(sessionID: string) => `${prefix}/${slug()}/session/${sessionID}`}
     >
       <LocalProvider>{props.children}</LocalProvider>
     </DataProvider>
@@ -34,6 +36,7 @@ export default function Layout(props: ParentProps) {
   const location = useLocation()
   const language = useLanguage()
   const globalSDK = useGlobalSDK()
+  const prefix = useRoutePrefix()
   const directory = createMemo(() => decode64(params.dir) ?? "")
   const [state, setState] = createStore({ invalid: "", resolved: "" })
 
@@ -48,7 +51,7 @@ export default function Layout(props: ParentProps) {
         title: language.t("common.requestFailed"),
         description: language.t("directory.error.invalidUrl"),
       })
-      navigate("/", { replace: true })
+      navigate(`${prefix}/`, { replace: true })
       return
     }
 
@@ -67,8 +70,9 @@ export default function Layout(props: ParentProps) {
           setState("resolved", next)
         })
         if (next === raw) return
-        const path = location.pathname.slice(current.length + 1)
-        navigate(`/${base64Encode(next)}${path}${location.search}${location.hash}`, { replace: true })
+        const prefixLen = prefix ? prefix.length : 0
+        const path = location.pathname.slice(prefixLen + 1 + current.length)
+        navigate(`${prefix}/${base64Encode(next)}${path}${location.search}${location.hash}`, { replace: true })
       })
       .catch(() => {
         if (params.dir !== current) return

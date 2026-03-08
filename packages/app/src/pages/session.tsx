@@ -45,6 +45,7 @@ import { useSessionCommands } from "@/pages/session/use-session-commands"
 import { useSessionHashScroll } from "@/pages/session/use-session-hash-scroll"
 import { same } from "@/utils/same"
 import { formatServerError } from "@/utils/server-errors"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 const emptyUserMessages: UserMessage[] = []
 
@@ -261,6 +262,7 @@ export default function Page() {
   const language = useLanguage()
   const params = useParams()
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const sdk = useSDK()
   const prompt = usePrompt()
   const comments = useComments()
@@ -1316,7 +1318,7 @@ export default function Page() {
                     if (!target) return
                     if (target === sdk.directory) return
                     layout.projects.open(target)
-                    navigate(`/${base64Encode(target)}/session`)
+                    navigate(`${prefix}/${base64Encode(target)}/session`)
                   }}
                 />
               </Match>

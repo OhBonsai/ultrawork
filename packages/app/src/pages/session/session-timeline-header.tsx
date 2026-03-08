@@ -15,6 +15,7 @@ import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { useLanguage } from "@/context/language"
 import { useSDK } from "@/context/sdk"
 import { useSync } from "@/context/sync"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 export function SessionTimelineHeader(props: {
   centered: boolean
@@ -27,6 +28,7 @@ export function SessionTimelineHeader(props: {
   placeholderTitle: () => boolean
 }) {
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const params = useParams()
   const sdk = useSDK()
   const sync = useSync()
@@ -255,14 +257,14 @@ export function SessionTimelineHeader(props: {
   const navigateAfterSessionRemoval = (sessionID: string, parentID?: string, nextSessionID?: string) => {
     if (params.id !== sessionID) return
     if (parentID) {
-      navigate(`/${params.dir}/session/${parentID}`)
+      navigate(`${prefix}/${params.dir}/session/${parentID}`)
       return
     }
     if (nextSessionID) {
-      navigate(`/${params.dir}/session/${nextSessionID}`)
+      navigate(`${prefix}/${params.dir}/session/${nextSessionID}`)
       return
     }
-    navigate(`/${params.dir}/session`)
+    navigate(`${prefix}/${params.dir}/session`)
   }
 
   const archiveSession = async (sessionID: string) => {
@@ -356,7 +358,7 @@ export function SessionTimelineHeader(props: {
   const navigateParent = () => {
     const id = props.parentID()
     if (!id) return
-    navigate(`/${params.dir}/session/${id}`)
+    navigate(`${prefix}/${params.dir}/session/${id}`)
   }
 
   function DialogDeleteSession(input: { sessionID: string }) {

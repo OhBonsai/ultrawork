@@ -25,6 +25,7 @@ import { PromptProvider } from "@/context/prompt"
 import { type ServerConnection, ServerProvider, useServer } from "@/context/server"
 import { SettingsProvider } from "@/context/settings"
 import { TerminalProvider } from "@/context/terminal"
+import { RoutePrefixProvider } from "@/context/route-prefix"
 import DirectoryLayout from "@/pages/directory-layout"
 import Layout from "@/pages/layout"
 import { ErrorPage } from "./pages/error"
@@ -32,6 +33,9 @@ import { Dynamic } from "solid-js/web"
 
 const Home = lazy(() => import("@/pages/home"))
 const Session = lazy(() => import("@/pages/session"))
+const LayoutV2 = lazy(() => import("@/pages/layout_v2"))
+const HomeV2 = lazy(() => import("@/pages/home_v2"))
+const SessionV2 = lazy(() => import("@/pages/session_v2"))
 const Loading = () => <div class="size-full" />
 
 const HomeRoute = () => (
@@ -49,6 +53,18 @@ const SessionRoute = () => (
 )
 
 const SessionIndexRoute = () => <Navigate href="session" />
+
+const HomeV2Route = () => (
+  <Suspense fallback={<Loading />}>
+    <HomeV2 />
+  </Suspense>
+)
+
+const SessionV2Route = () => (
+  <Suspense fallback={<Loading />}>
+    <SessionV2 />
+  </Suspense>
+)
 
 function UiI18nBridge(props: ParentProps) {
   const language = useLanguage()
@@ -79,7 +95,7 @@ function AppShellProviders(props: ParentProps) {
             <ModelsProvider>
               <CommandProvider>
                 <HighlightsProvider>
-                  <Layout>{props.children}</Layout>
+                  {props.children}
                 </HighlightsProvider>
               </CommandProvider>
             </ModelsProvider>
@@ -156,10 +172,26 @@ export function AppInterface(props: {
               component={props.router ?? Router}
               root={(routerProps) => <RouterRoot appChildren={props.children}>{routerProps.children}</RouterRoot>}
             >
-              <Route path="/" component={HomeRoute} />
-              <Route path="/:dir" component={DirectoryLayout}>
-                <Route path="/" component={SessionIndexRoute} />
-                <Route path="/session/:id?" component={SessionRoute} />
+              {/* v2 routes (default) */}
+              <Route path="/" component={(p) => (
+                <Suspense fallback={<Loading />}>
+                  <LayoutV2>{p.children}</LayoutV2>
+                </Suspense>
+              )}>
+                <Route path="/" component={HomeV2Route} />
+                <Route path="/task/:dir/:id" component={SessionV2Route} />
+              </Route>
+              {/* v1 routes (legacy, prefixed) */}
+              <Route path="/v1" component={(p) => (
+                <RoutePrefixProvider value="/v1">
+                  <Layout>{p.children}</Layout>
+                </RoutePrefixProvider>
+              )}>
+                <Route path="/" component={HomeRoute} />
+                <Route path="/:dir" component={DirectoryLayout}>
+                  <Route path="/" component={SessionIndexRoute} />
+                  <Route path="/session/:id?" component={SessionRoute} />
+                </Route>
               </Route>
             </Dynamic>
           </GlobalSyncProvider>

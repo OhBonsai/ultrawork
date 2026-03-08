@@ -15,6 +15,7 @@ import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
 import { normalizeServerUrl, ServerConnection, useServer } from "@/context/server"
 import { checkServerHealth, type ServerHealth } from "@/utils/server-health"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 interface ServerFormProps {
   value: string
@@ -166,6 +167,7 @@ function ServerForm(props: ServerFormProps) {
 
 export function DialogSelectServer() {
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const dialog = useDialog()
   const server = useServer()
   const platform = usePlatform()
@@ -282,11 +284,11 @@ export function DialogSelectServer() {
     dialog.close()
     if (persist && conn.type === "http") {
       server.add(conn)
-      navigate("/")
+      navigate(`${prefix}/`)
       return
     }
     server.setActive(ServerConnection.key(conn))
-    navigate("/")
+    navigate(`${prefix}/`)
   }
 
   const handleAddChange = (value: string) => {

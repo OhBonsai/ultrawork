@@ -17,6 +17,7 @@ import { Worktree as WorktreeState } from "@/utils/worktree"
 import { buildRequestParts } from "./build-request-parts"
 import { setCursorPosition } from "./editor-dom"
 import { formatServerError } from "@/utils/server-errors"
+import { useRoutePrefix } from "@/context/route-prefix"
 
 type PendingPrompt = {
   abort: AbortController
@@ -55,6 +56,7 @@ type CommentItem = {
 
 export function createPromptSubmit(input: PromptSubmitInput) {
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const sdk = useSDK()
   const sync = useSync()
   const globalSync = useGlobalSync()
@@ -204,7 +206,7 @@ export function createPromptSubmit(input: PromptSubmitInput) {
       if (session) {
         if (shouldAutoAccept) permission.enableAutoAccept(session.id, sessionDirectory)
         layout.handoff.setTabs(base64Encode(sessionDirectory), session.id)
-        navigate(`/${base64Encode(sessionDirectory)}/session/${session.id}`)
+        navigate(`${prefix}/${base64Encode(sessionDirectory)}/session/${session.id}`)
       }
     }
     if (!session) {

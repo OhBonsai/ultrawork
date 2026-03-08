@@ -49,6 +49,9 @@
     "typecheck": "bun --filter @opencode-ai/desktop typecheck",
     "test": "bun --filter @opencode-ai/app test",
     "test:e2e": "bun --cwd packages/app script/e2e-local.ts",
+    "test:e2e:v2": "bun --cwd packages/app script/e2e-local.ts -- e2e/v2/",
+    "test:e2e:v2:headed": "PLAYWRIGHT_HEADED=1 bun --cwd packages/app script/e2e-local.ts -- e2e/v2/",
+    "test:e2e:v1": "bun --cwd packages/app script/e2e-local.ts -- --grep 'home|sidebar|session|settings|terminal|navigation|palette'",
     "clean": "bun scripts/clean.ts",
     "clean:cargo": "bun scripts/clean.ts --cargo",
     "clean:npm": "bun scripts/clean.ts --npm"

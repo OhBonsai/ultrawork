@@ -16,6 +16,7 @@ import { type Session } from "@opencode-ai/sdk/v2/client"
 import { type LocalProject } from "@/context/layout"
 import { useGlobalSync } from "@/context/global-sync"
 import { useLanguage } from "@/context/language"
+import { useRoutePrefix } from "@/context/route-prefix"
 import { NewSessionItem, SessionItem, SessionSkeleton } from "./sidebar-items"
 import { childMapByParent, sortedRootSessions } from "./helpers"
 
@@ -306,6 +307,7 @@ export const SortableWorkspace = (props: {
   mobile?: boolean
 }): JSX.Element => {
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const params = useParams()
   const globalSync = useGlobalSync()
   const language = useLanguage()
@@ -437,7 +439,7 @@ export const SortableWorkspace = (props: {
                 root={props.project.worktree}
                 setHoverSession={props.ctx.setHoverSession}
                 clearHoverProjectSoon={props.ctx.clearHoverProjectSoon}
-                navigateToNewSession={() => navigate(`/${slug()}/session`)}
+                navigateToNewSession={() => navigate(`${prefix}/${slug()}/session`)}
               />
             </div>
           </div>

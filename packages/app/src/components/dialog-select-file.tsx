@@ -14,6 +14,7 @@ import { useGlobalSync } from "@/context/global-sync"
 import { useLayout } from "@/context/layout"
 import { useFile } from "@/context/file"
 import { useLanguage } from "@/context/language"
+import { useRoutePrefix } from "@/context/route-prefix"
 import { decode64 } from "@/utils/base64"
 import { getRelativeTime } from "@/utils/time"
 
@@ -261,6 +262,7 @@ export function DialogSelectFile(props: { mode?: DialogSelectFileMode; onOpenFil
   const dialog = useDialog()
   const params = useParams()
   const navigate = useNavigate()
+  const prefix = useRoutePrefix()
   const globalSDK = useGlobalSDK()
   const globalSync = useGlobalSync()
   const filesOnly = () => props.mode === "files"
@@ -365,7 +367,7 @@ export function DialogSelectFile(props: { mode?: DialogSelectFileMode; onOpenFil
 
     if (item.type === "session") {
       if (!item.directory || !item.sessionID) return
-      navigate(`/${base64Encode(item.directory)}/session/${item.sessionID}`)
+      navigate(`${prefix}/${base64Encode(item.directory)}/session/${item.sessionID}`)
       return
     }
 

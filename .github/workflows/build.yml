@@ -135,16 +135,11 @@ jobs:
           echo "---"
           find artifacts -type f \( -name "*.deb" -o -name "*.rpm" -o -name "*.msi" -o -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.sig" -o -name "*.json" \) | head -30
 
-      - name: Checkout for version
-        uses: actions/checkout@v4
-        with:
-          path: repo
-
-      - name: Get version
+      - name: Get version from tag
         id: version
         run: |
-          VERSION=$(node -p "require('./repo/packages/desktop/package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Flatten artifacts for release
         run: |
@@ -157,8 +152,8 @@ jobs:
         with:
           draft: true
           generate_release_notes: true
-          tag_name: v${{ steps.version.outputs.version }}
-          name: ultrawork v${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ultrawork ${{ steps.version.outputs.tag }}
           files: release-files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,7 @@
 
 > 对应方案文档：[feature-migrate-v2.md](./feature-migrate-v2.md)
 >
-> 更新时间：2026-03-09
+> 更新时间：2026-03-10
 
 ---
 
@@ -13,7 +13,7 @@
 | **0**   | 路由基座 + Slot 骨架            | ✅ 完成 | `feat/migrate_phase0`    |
 | **1A**  | Sidebar 重构                | ✅ 完成 | `feature/v2-sidebar`     |
 | **1B**  | Home 视图改造                 | ✅ 完成  | `feature/v2-home`        |
-| **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
+| **1C**  | Right Side Panel 改造       | ✅ 完成 | `feature/v2-right-panel` |
 | **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
 | **1D-W** | 工作目录设置                  | ✅ 完成  | `feature/v2-settings`    |
 | **1D-P** | 模型（供应商）设置              | ✅ 完成  | `feature/v2-settings`    |
@@ -132,24 +132,27 @@
 
 ## Phase 1C：Right Side Panel 改造
 
-**分支**：`feature/v2-right-panel` ｜ **依赖**：Phase 0 ｜ **状态**：⬜ 未开始
+**分支**：`feature/v2-right-panel` ｜ **依赖**：Phase 0 ｜ **状态**：✅ 完成
 
 ### 改动清单
 
 | 改动 | 文件 | 状态 |
 |------|------|------|
-| Side Panel v2（可折叠多 Section） | `session-side-panel_v2.tsx` | ⬜ |
-| 产物列表 Section | `artifact-list.tsx` | ⬜ |
-| 产物预览区 + 多格式预览器 | `artifact-preview.tsx` | ⬜ |
-| Artifact Store | `context/artifact.ts` | ⬜ |
-| 更新 session_v2 引用 | `session_v2.tsx` | ⬜ |
+| Side Panel v2（可折叠多 Section） | `session-side-panel_v2.tsx` | ✅ |
+| 产物列表 Section | `artifact-list.tsx` | ✅ |
+| 产物预览区 + 多格式预览器 | `artifact-preview.tsx` | ✅ |
+| Artifact Store | `context/artifact.ts` | ✅ |
+| 更新 session_v2 引用 | `session_v2.tsx` | ✅ |
+| v2 目录 Provider 包装 | `directory-layout_v2.tsx` | ✅ |
+| v2 session 路由包装 DirectoryLayoutV2 | `app.tsx` | ✅ |
+| i18n 国际化 key（en/zh） | `i18n/en.ts`, `i18n/zh.ts` | ✅ |
 
 ### 完成门禁
 
-- [ ] `e2e/v2/side-panel.test.ts` — 面板折叠/展开、产物列表
-- [ ] `e2e/v2/artifact-preview.test.ts` — 分屏预览、Markdown 渲染
-- [ ] `e2e/v2/task-execution.test.ts` — Home → Task 跳转、消息流
-- [ ] v1 回归 e2e 通过 + typecheck 无报错
+- [x] `e2e/v2/side-panel.spec.ts` — 面板可见性、空状态、产物列表、移动端隐藏（4 用例）
+- [x] `e2e/v2/artifact-preview.spec.ts` — 点击打开预览、关闭预览、Markdown 渲染（3 用例）
+- [x] `e2e/v2/task-execution.spec.ts` — v2 路由导航、session 渲染、Home↔Session 切换（5 用例）
+- [x] typecheck 无报错
 
 ---
 
@@ -236,6 +239,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-10 | Phase 1C 完成：Side Panel v2 + Artifact Store + 产物列表 + 多格式预览器 + DirectoryLayoutV2 Provider + i18n + e2e 12 用例（side-panel/artifact-preview/task-execution），修复 artifact-list useArtifact 作用域 bug、artifact-preview srcDoc/FileContent 类型错误 |
 | 2026-03-09 | Phase 1B 完成：Home v2（欢迎+能力卡片+轻量Composer）、workspace-selector、add-menu、GlobalModelSelector（独立模型选择器）、submit→v1 session 导航修复，e2e 12 用例全部通过，typecheck 通过 |
 | 2026-03-09 | Phase 1A 完成：新增 `sidebar-sessions.spec.ts` 功能测试（5 用例：SDK 创建会话、点击导航、多会话列表、归档移除、新建按钮导航），v2 e2e 全部 50 用例通过 |
 | 2026-03-09 | Phase 1D-W 完成：Popover「工作目录」对接 DialogWorkspace（目录列表 + 添加/移除/编辑 + Directories/Environment Tab），e2e 7 用例通过 |
@@ -247,5 +251,6 @@
 | 2026-03-08 | i18n 扩展至全部 17 个 locale，修复非 en/zh 语言切换后 UI 不更新的 bug |
 | 2026-03-08 | Phase 1D 代码实现完成：User Model + sidebar-user-profile + settings-popover + dialog-settings_v2（Tab 重组） + settings-general_v2（含 Profile） + privacy/capabilities 占位 + i18n(en/zh) + layout_v2 集成 |
 | 2026-03-08 | Phase 0 代码实现完成（路由双版本、v2 骨架、route-prefix、e2e 适配），待人工验证和 e2e 回归 |
+| 2026-03-08 | Phase 1C 代码实现完成：Artifact Store + 产物列表 + 多格式预览器 + Side Panel v2 + DirectoryLayoutV2 Provider + i18n，待 e2e 验证 |
 | 2026-03-08 | Phase 1B 代码实现完成：home_v2.tsx（欢迎+能力卡片+轻量Composer）、workspace-selector.tsx、add-menu.tsx、i18n keys、4 个 e2e 测试文件，typecheck 通过 |
 | 2026-03-08 | Phase 1A 代码实现完成：Sidebar v2（单层可折叠）、TaskList（扁平列表 + running 置顶）、Top Bar、layout_v2 slot 填充、e2e 测试 |

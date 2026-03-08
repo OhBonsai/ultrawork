@@ -871,4 +871,13 @@ export const dict = {
   "settingsV2.workspace.description": "管理您的工作目录",
   "settingsV2.workspace.addDirectory": "添加目录",
   "settingsV2.workspace.empty": "暂无工作目录",
+
+  "v2.panel.title": "产物",
+  "v2.panel.toggle": "切换面板",
+  "v2.artifact.title": "产物",
+  "v2.artifact.empty": "暂无产物",
+  "v2.artifact.final": "最终产物",
+  "v2.artifact.process": "过程产物",
+  "v2.artifact.closePreview": "关闭预览",
+  "v2.artifact.loadError": "加载文件失败",
 } satisfies Partial<Record<Keys, string>>

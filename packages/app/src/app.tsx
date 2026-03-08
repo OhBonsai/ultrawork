@@ -37,6 +37,7 @@ const Session = lazy(() => import("@/pages/session"))
 const LayoutV2 = lazy(() => import("@/pages/layout_v2"))
 const HomeV2 = lazy(() => import("@/pages/home_v2"))
 const SessionV2 = lazy(() => import("@/pages/session_v2"))
+const DirectoryLayoutV2 = lazy(() => import("@/pages/directory-layout_v2"))
 const Loading = () => <div class="size-full" />
 
 const HomeRoute = () => (
@@ -63,7 +64,9 @@ const HomeV2Route = () => (
 
 const SessionV2Route = () => (
   <Suspense fallback={<Loading />}>
-    <SessionV2 />
+    <DirectoryLayoutV2>
+      <SessionV2 />
+    </DirectoryLayoutV2>
   </Suspense>
 )
 

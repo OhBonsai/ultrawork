@@ -56,6 +56,10 @@ export function sessionPath(directory: string, sessionID?: string) {
   return `${dirPath(directory)}/session${sessionID ? `/${sessionID}` : ""}`
 }
 
+export function v2SessionPath(directory: string, sessionID: string) {
+  return `/task/${dirSlug(directory)}/${sessionID}`
+}
+
 export function workspacePersistKey(directory: string, key: string) {
   const head = directory.slice(0, 12) || "workspace"
   const sum = checksum(directory) ?? "0"

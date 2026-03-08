@@ -921,4 +921,13 @@ export const dict = {
   "settingsV2.workspace.description": "Manage your workspaces",
   "settingsV2.workspace.addDirectory": "Add directory",
   "settingsV2.workspace.empty": "No workspaces configured yet",
+
+  "v2.panel.title": "Artifacts",
+  "v2.panel.toggle": "Toggle panel",
+  "v2.artifact.title": "Artifacts",
+  "v2.artifact.empty": "No artifacts yet",
+  "v2.artifact.final": "Final",
+  "v2.artifact.process": "Process",
+  "v2.artifact.closePreview": "Close preview",
+  "v2.artifact.loadError": "Failed to load file",
 }

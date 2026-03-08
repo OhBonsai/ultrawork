@@ -45,3 +45,9 @@ yarn-error.log*
 # Playwright
 e2e/test-results/
 e2e/playwright-report/
+
+
+ultrademo/
+workany/
+ultrademopng
+.obsidian/

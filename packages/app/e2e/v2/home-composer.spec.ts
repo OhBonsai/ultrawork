@@ -25,5 +25,5 @@ test("model selector can be opened", async ({ page }) => {
   await expect(modelButton).toBeVisible()
   await modelButton.click()
   // Model selection dialog should appear
-  await expect(page.getByText("Select model")).toBeVisible()
+  await expect(page.getByRole("heading", { name: "Select model" })).toBeVisible()
 })

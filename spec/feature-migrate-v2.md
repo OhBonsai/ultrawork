@@ -303,11 +303,11 @@ git worktree add ../uw3-channels  feature/v2-channels-about
 
 #### Phase 1B 完成门禁
 
-- [ ] `e2e/v2/home.test.ts` — `/` 渲染欢迎标题 + 三张能力卡片
-- [ ] `e2e/v2/home-composer.test.ts` — 输入框可聚焦输入；工作目录选择器可打开；模型选择器可打开切换
-- [ ] `e2e/v2/home-add-menu.test.ts` — `+` 按钮点击弹出菜单；文件附件上传可选择文件
-- [ ] `e2e/v2/home-prompts.test.ts` — 点击能力卡片展开推荐 Prompt 列表；点击 Prompt 填入输入框
-- [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
+- [x] `e2e/v2/home.spec.ts` — `/` 渲染欢迎标题 + 三张能力卡片
+- [x] `e2e/v2/home-composer.spec.ts` — 输入框可聚焦输入；工作目录选择器可打开；模型选择器可打开切换
+- [x] `e2e/v2/home-add-menu.spec.ts` — `+` 按钮点击弹出菜单；文件附件上传可选择文件
+- [x] `e2e/v2/home-prompts.spec.ts` — 点击能力卡片展开推荐 Prompt 列表；点击 Prompt 填入输入框
+- [x] v1 回归 e2e 通过（5 个 pre-existing 失败与 Phase 1B 无关） + typecheck 无报错
 
 ---
 

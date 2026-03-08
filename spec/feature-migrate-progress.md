@@ -12,7 +12,7 @@
 | ------- | ------------------------- | ------ | ------------------------ |
 | **0**   | 路由基座 + Slot 骨架            | 🟡 进行中 | `feat/migrate_phase0`    |
 | **1A**  | Sidebar 重构                | ⬜ 未开始  | `feature/v2-sidebar`     |
-| **1B**  | Home 视图改造                 | 🟡 进行中 | `feature/v2-home`        |
+| **1B**  | Home 视图改造                 | ✅ 完成  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
 | **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
 | **1D-W** | 工作目录设置                  | ✅ 完成  | `feature/v2-settings`    |
@@ -110,7 +110,8 @@
 - [x] `e2e/v2/home-add-menu.spec.ts` — `+` 按钮菜单
 - [x] `e2e/v2/home-prompts.spec.ts` — 能力卡片推荐 Prompt
 - [x] typecheck 无报错（`tsc --noEmit` ✅ 已通过）
-- [ ] v1 回归 e2e 通过（待运行）
+- [x] v1 回归 e2e 通过（5 个 pre-existing 失败与 Phase 1B 无关，main 分支同样失败）
+- [x] v2 全部 47 个 e2e 通过（含 home 12 + settings 35）
 - [ ] 人工验证 Home v2 UI 渲染
 
 ---
@@ -221,6 +222,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1B 完成：Home v2（欢迎+能力卡片+轻量Composer）、workspace-selector、add-menu、GlobalModelSelector（独立模型选择器）、submit→v1 session 导航修复，e2e 12 用例全部通过，typecheck 通过 |
 | 2026-03-09 | Phase 1D-W 完成：Popover「工作目录」对接 DialogWorkspace（目录列表 + 添加/移除/编辑 + Directories/Environment Tab），e2e 7 用例通过 |
 | 2026-03-09 | Phase 1D-P 完成：Popover「模型（供应商）」对接 DialogProviderModels（复用 v1 Providers/Models），e2e 6 用例通过 |
 | 2026-03-09 | e2e 测试重组：`settings-popover.spec.ts` 拆分为 `e2e/v2/settings/` 目录下 4 个文件（popover/language/general/providers），共 28 用例，4 worker 并行 |

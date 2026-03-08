@@ -54,6 +54,9 @@
   "scripts": {
     "dev:web": "bun --filter @opencode-ai/app dev",
     "dev:desktop": "bun --filter @opencode-ai/desktop tauri dev",
+    "typecheck": "bun --filter @opencode-ai/desktop typecheck",
+    "test": "bun --filter @opencode-ai/app test",
+    "test:e2e": "bun --cwd packages/app script/e2e-local.ts",
     "clean": "bun scripts/clean.ts",
     "clean:cargo": "bun scripts/clean.ts --cargo",
     "clean:npm": "bun scripts/clean.ts --npm"

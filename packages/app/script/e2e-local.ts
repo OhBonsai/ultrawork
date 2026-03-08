@@ -1,64 +1,111 @@
+#!/usr/bin/env bun
+/**
+ * Local e2e test runner for the standalone ultrawork project.
+ *
+ * Differences from the monorepo version:
+ * - Starts opencode server via the CLI binary (sidecar) instead of direct TS import
+ * - Seeds a test session via the public SDK API instead of internal module imports
+ *
+ * Binary resolution order:
+ *   1. OPENCODE_BIN env var
+ *   2. ../../desktop/src-tauri/sidecars/opencode-cli-{target}  (local sidecar)
+ *   3. `opencode` on PATH
+ *
+ * Usage:
+ *   cd packages/app
+ *   bun script/e2e-local.ts
+ *   bun script/e2e-local.ts -- --grep "sidebar"
+ */
+
 import fs from "node:fs/promises"
 import net from "node:net"
 import os from "node:os"
 import path from "node:path"
+import { createOpencodeClient } from "@opencode-ai/sdk/v2/client"
 
-async function freePort() {
-  return await new Promise<number>((resolve, reject) => {
-    const server = net.createServer()
-    server.once("error", reject)
-    server.listen(0, () => {
-      const address = server.address()
-      if (!address || typeof address === "string") {
-        server.close(() => reject(new Error("Failed to acquire a free port")))
+// ── helpers ────────────────────────────────────────────────────────────────
+
+async function freePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const srv = net.createServer()
+    srv.once("error", reject)
+    srv.listen(0, () => {
+      const addr = srv.address()
+      if (!addr || typeof addr === "string") {
+        srv.close(() => reject(new Error("Failed to acquire a free port")))
         return
       }
-      server.close((err) => {
-        if (err) {
-          reject(err)
-          return
-        }
-        resolve(address.port)
-      })
+      srv.close((err) => (err ? reject(err) : resolve(addr.port)))
     })
   })
 }
 
-async function waitForHealth(url: string) {
-  const timeout = Date.now() + 120_000
-  const errors: string[] = []
-  while (Date.now() < timeout) {
-    const result = await fetch(url)
-      .then((r) => ({ ok: r.ok, error: undefined }))
-      .catch((error) => ({
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      }))
-    if (result.ok) return
-    if (result.error) errors.push(result.error)
+async function waitForHealth(url: string, timeoutMs = 120_000) {
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    const ok = await fetch(url)
+      .then((r) => r.ok)
+      .catch(() => false)
+    if (ok) return
     await new Promise((r) => setTimeout(r, 250))
   }
-  const last = errors.length ? ` (last error: ${errors[errors.length - 1]})` : ""
-  throw new Error(`Timed out waiting for server health: ${url}${last}`)
+  throw new Error(`Timed out waiting for server health: ${url}`)
 }
+
+function detectRustTarget(): string {
+  const p = process.platform
+  const a = process.arch
+  if (p === "darwin") return a === "arm64" ? "aarch64-apple-darwin" : "x86_64-apple-darwin"
+  if (p === "win32") return "x86_64-pc-windows-msvc"
+  if (p === "linux") return a === "arm64" ? "aarch64-unknown-linux-gnu" : "x86_64-unknown-linux-gnu"
+  throw new Error(`Unsupported platform: ${p}/${a}`)
+}
+
+async function resolveOpencodeBin(): Promise<string> {
+  // 1. explicit env var
+  if (process.env.OPENCODE_BIN) return process.env.OPENCODE_BIN
+
+  // 2. sidecar next to desktop package
+  const target = detectRustTarget()
+  const sidecar = path.resolve(
+    import.meta.dirname,
+    "../../desktop/src-tauri/sidecars",
+    `opencode-cli-${target}`,
+  )
+  if (
+    await fs
+      .access(sidecar)
+      .then(() => true)
+      .catch(() => false)
+  ) {
+    return sidecar
+  }
+
+  // 3. PATH
+  const which = Bun.spawnSync(["which", "opencode"])
+  if (which.exitCode === 0) return which.stdout.toString().trim()
+
+  throw new Error(
+    "opencode binary not found. Set OPENCODE_BIN, run predev.ts to download the sidecar, or install opencode globally.",
+  )
+}
+
+// ── main ───────────────────────────────────────────────────────────────────
 
 const appDir = process.cwd()
 const repoDir = path.resolve(appDir, "../..")
-const opencodeDir = path.join(repoDir, "packages", "opencode")
 
 const extraArgs = (() => {
   const args = process.argv.slice(2)
-  if (args[0] === "--") return args.slice(1)
-  return args
+  return args[0] === "--" ? args.slice(1) : args
 })()
 
 const [serverPort, webPort] = await Promise.all([freePort(), freePort()])
-
 const sandbox = await fs.mkdtemp(path.join(os.tmpdir(), "opencode-e2e-"))
 const keepSandbox = process.env.OPENCODE_E2E_KEEP_SANDBOX === "1"
 
-const serverEnv = {
-  ...process.env,
+const serverEnv: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined) as [string, string][]),
   OPENCODE_DISABLE_SHARE: process.env.OPENCODE_DISABLE_SHARE ?? "true",
   OPENCODE_DISABLE_LSP_DOWNLOAD: "true",
   OPENCODE_DISABLE_DEFAULT_PLUGINS: "true",
@@ -73,36 +120,27 @@ const serverEnv = {
   OPENCODE_E2E_MESSAGE: "Seeded for UI e2e",
   OPENCODE_E2E_MODEL: "opencode/gpt-5-nano",
   OPENCODE_CLIENT: "app",
-} satisfies Record<string, string>
+}
 
-const runnerEnv = {
+const runnerEnv: Record<string, string> = {
   ...serverEnv,
   PLAYWRIGHT_SERVER_HOST: "127.0.0.1",
   PLAYWRIGHT_SERVER_PORT: String(serverPort),
   VITE_OPENCODE_SERVER_HOST: "127.0.0.1",
   VITE_OPENCODE_SERVER_PORT: String(serverPort),
   PLAYWRIGHT_PORT: String(webPort),
-} satisfies Record<string, string>
+}
 
-let seed: ReturnType<typeof Bun.spawn> | undefined
+let server: ReturnType<typeof Bun.spawn> | undefined
 let runner: ReturnType<typeof Bun.spawn> | undefined
-let server: { stop: () => Promise<void> | void } | undefined
-let inst: { Instance: { disposeAll: () => Promise<void> | void } } | undefined
 let cleaned = false
 
 const cleanup = async () => {
   if (cleaned) return
   cleaned = true
-
-  if (seed && seed.exitCode === null) seed.kill("SIGTERM")
-  if (runner && runner.exitCode === null) runner.kill("SIGTERM")
-
-  const jobs = [
-    inst?.Instance.disposeAll(),
-    server?.stop(),
-    keepSandbox ? undefined : fs.rm(sandbox, { recursive: true, force: true }),
-  ].filter(Boolean)
-  await Promise.allSettled(jobs)
+  if (server?.exitCode === null) server.kill("SIGTERM")
+  if (runner?.exitCode === null) runner.kill("SIGTERM")
+  if (!keepSandbox) await fs.rm(sandbox, { recursive: true, force: true }).catch(() => {})
 }
 
 const shutdown = (code: number, reason: string) => {
@@ -113,62 +151,46 @@ const shutdown = (code: number, reason: string) => {
   })
 }
 
-const reportInternalError = (reason: string, error: unknown) => {
-  console.warn(`e2e-local ignored server error: ${reason}`)
-  console.warn(error)
-}
-
 process.once("SIGINT", () => shutdown(130, "SIGINT"))
 process.once("SIGTERM", () => shutdown(143, "SIGTERM"))
 process.once("SIGHUP", () => shutdown(129, "SIGHUP"))
-process.once("uncaughtException", (error) => {
-  reportInternalError("uncaughtException", error)
-})
-process.once("unhandledRejection", (error) => {
-  reportInternalError("unhandledRejection", error)
-})
+process.once("uncaughtException", (e) => { console.warn("uncaughtException", e) })
+process.once("unhandledRejection", (e) => { console.warn("unhandledRejection", e) })
 
 let code = 1
 
 try {
-  seed = Bun.spawn(["bun", "script/seed-e2e.ts"], {
-    cwd: opencodeDir,
-    env: serverEnv,
+  const bin = await resolveOpencodeBin()
+  console.log(`Using opencode binary: ${bin}`)
+
+  // Start opencode server as subprocess
+  server = Bun.spawn(
+    [bin, "serve", "--port", String(serverPort), "--hostname", "127.0.0.1"],
+    { env: serverEnv, stdout: "inherit", stderr: "inherit" },
+  )
+
+  const serverUrl = `http://127.0.0.1:${serverPort}`
+  console.log(`Waiting for opencode server at ${serverUrl}...`)
+  await waitForHealth(`${serverUrl}/global/health`)
+  console.log("opencode server is ready")
+
+  // Seed a test session via SDK
+  const sdk = createOpencodeClient({ baseUrl: serverUrl, directory: repoDir, throwOnError: false })
+  const sessionResult = await sdk.session.create({ title: "E2E Session" })
+  if (sessionResult.data) {
+    console.log(`Seeded session: ${sessionResult.data.id}`)
+  } else {
+    console.warn("Failed to seed session, continuing anyway")
+  }
+
+  // Run playwright
+  runner = Bun.spawn(["bun", "run", "test:e2e", ...extraArgs], {
+    cwd: appDir,
+    env: runnerEnv,
     stdout: "inherit",
     stderr: "inherit",
   })
-
-  const seedExit = await seed.exited
-  if (seedExit !== 0) {
-    code = seedExit
-  } else {
-    Object.assign(process.env, serverEnv)
-    process.env.AGENT = "1"
-    process.env.OPENCODE = "1"
-    process.env.OPENCODE_PID = String(process.pid)
-
-    const log = await import("../../opencode/src/util/log")
-    const install = await import("../../opencode/src/installation")
-    await log.Log.init({
-      print: true,
-      dev: install.Installation.isLocal(),
-      level: "WARN",
-    })
-
-    const servermod = await import("../../opencode/src/server/server")
-    inst = await import("../../opencode/src/project/instance")
-    server = servermod.Server.listen({ port: serverPort, hostname: "127.0.0.1" })
-    console.log(`opencode server listening on http://127.0.0.1:${serverPort}`)
-
-    await waitForHealth(`http://127.0.0.1:${serverPort}/global/health`)
-    runner = Bun.spawn(["bun", "test:e2e", ...extraArgs], {
-      cwd: appDir,
-      env: runnerEnv,
-      stdout: "inherit",
-      stderr: "inherit",
-    })
-    code = await runner.exited
-  }
+  code = await runner.exited
 } catch (error) {
   console.error(error)
   code = 1

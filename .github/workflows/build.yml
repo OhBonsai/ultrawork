@@ -124,20 +124,33 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: |
+          ls -R artifacts
+          echo "---"
+          find artifacts -type f \( -name "*.deb" -o -name "*.rpm" -o -name "*.msi" -o -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.sig" -o -name "*.json" \) | head -30
+
+      - name: Checkout for version
         uses: actions/checkout@v4
+        with:
+          path: repo
 
       - name: Get version
         id: version
         run: |
-          VERSION=$(node -p "require('./packages/desktop/package.json').version")
+          VERSION=$(node -p "require('./repo/packages/desktop/package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
+      - name: Flatten artifacts for release
+        run: |
+          mkdir -p release-files
+          find artifacts -type f \( -name "*.deb" -o -name "*.rpm" -o -name "*.msi" -o -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" \) -exec cp {} release-files/ \;
+          ls -la release-files/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -146,6 +159,6 @@ jobs:
           generate_release_notes: true
           tag_name: v${{ steps.version.outputs.version }}
           name: ultrawork v${{ steps.version.outputs.version }}
-          files: artifacts/**/*
+          files: release-files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

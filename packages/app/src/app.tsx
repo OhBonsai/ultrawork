@@ -24,6 +24,7 @@ import { usePlatform } from "@/context/platform"
 import { PromptProvider } from "@/context/prompt"
 import { type ServerConnection, ServerProvider, useServer } from "@/context/server"
 import { SettingsProvider } from "@/context/settings"
+import { UserProfileProvider } from "@/context/user-profile"
 import { TerminalProvider } from "@/context/terminal"
 import { RoutePrefixProvider } from "@/context/route-prefix"
 import DirectoryLayout from "@/pages/directory-layout"
@@ -89,19 +90,21 @@ function MarkedProviderWithNativeParser(props: ParentProps) {
 function AppShellProviders(props: ParentProps) {
   return (
     <SettingsProvider>
-      <PermissionProvider>
-        <LayoutProvider>
-          <NotificationProvider>
-            <ModelsProvider>
-              <CommandProvider>
-                <HighlightsProvider>
-                  {props.children}
-                </HighlightsProvider>
-              </CommandProvider>
-            </ModelsProvider>
-          </NotificationProvider>
-        </LayoutProvider>
-      </PermissionProvider>
+      <UserProfileProvider>
+        <PermissionProvider>
+          <LayoutProvider>
+            <NotificationProvider>
+              <ModelsProvider>
+                <CommandProvider>
+                  <HighlightsProvider>
+                    {props.children}
+                  </HighlightsProvider>
+                </CommandProvider>
+              </ModelsProvider>
+            </NotificationProvider>
+          </LayoutProvider>
+        </PermissionProvider>
+      </UserProfileProvider>
     </SettingsProvider>
   )
 }

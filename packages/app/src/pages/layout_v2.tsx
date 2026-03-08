@@ -1,5 +1,6 @@
 import { ErrorBoundary, type ParentProps, Suspense } from "solid-js"
 import { A } from "@solidjs/router"
+import { SidebarUserProfile } from "./layout/sidebar-user-profile"
 
 function V2ErrorFallback(props: { error: Error }) {
   return (
@@ -23,10 +24,13 @@ function V2ErrorFallback(props: { error: Error }) {
 function SidebarSlot() {
   return (
     <div
-      class="flex h-full w-12 shrink-0 flex-col items-center border-r border-color-border-base bg-color-bg-base py-3"
+      class="flex h-full w-[210px] shrink-0 flex-col border-r border-color-border-base bg-color-bg-base"
       data-component="v2-sidebar-slot"
     >
-      <div class="text-color-text-dimmed text-10">Sidebar</div>
+      <div class="flex flex-1 flex-col items-center py-3">
+        <div class="text-color-text-dimmed text-10">Sidebar</div>
+      </div>
+      <SidebarUserProfile />
     </div>
   )
 }
@@ -46,10 +50,6 @@ function PanelSlot() {
   return null
 }
 
-function UserSlot() {
-  return null
-}
-
 export default function LayoutV2(props: ParentProps) {
   return (
     <ErrorBoundary fallback={(error) => <V2ErrorFallback error={error} />}>
@@ -64,7 +64,6 @@ export default function LayoutV2(props: ParentProps) {
             <PanelSlot />
           </div>
         </div>
-        <UserSlot />
       </div>
     </ErrorBoundary>
   )

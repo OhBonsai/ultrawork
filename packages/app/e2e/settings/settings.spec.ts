@@ -43,9 +43,9 @@ test("changing language updates settings labels", async ({ page, gotoSession }) 
   await expect(select).toBeVisible()
   await select.locator('[data-slot="select-select-trigger"]').click()
 
-  await page.locator('[data-slot="select-select-item"]').filter({ hasText: "Deutsch" }).click()
+  await page.locator('[data-slot="select-select-item"]').filter({ hasText: "简体中文" }).click()
 
-  await expect(heading).toHaveText("Allgemein")
+  await expect(heading).toHaveText("通用")
 
   await select.locator('[data-slot="select-select-trigger"]').click()
   await page.locator('[data-slot="select-select-item"]').filter({ hasText: "English" }).click()

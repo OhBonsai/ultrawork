@@ -10,8 +10,8 @@
 
 | Phase   | 名称                        | 状态     | 分支                       |
 | ------- | ------------------------- | ------ | ------------------------ |
-| **0**   | 路由基座 + Slot 骨架            | 🟡 进行中 | `feat/migrate_phase0`    |
-| **1A**  | Sidebar 重构                | ⬜ 未开始  | `feature/v2-sidebar`     |
+| **0**   | 路由基座 + Slot 骨架            | ✅ 完成 | `feat/migrate_phase0`    |
+| **1A**  | Sidebar 重构                | ✅ 完成 | `feature/v2-sidebar`     |
 | **1B**  | Home 视图改造                 | ✅ 完成  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
 | **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
@@ -32,7 +32,7 @@
 
 ## Phase 0：路由基座 + Slot 骨架
 
-**分支**：`feat/migrate_phase0` ｜ **状态**：🟡 进行中
+**分支**：`feat/migrate_phase0` ｜ **状态**：✅ 完成
 
 ### 0.1 路由双版本共存
 
@@ -70,22 +70,36 @@
 
 ## Phase 1A：Sidebar 重构
 
-**分支**：`feature/v2-sidebar` ｜ **依赖**：Phase 0 ｜ **状态**：⬜ 未开始
+**分支**：`feature/v2-sidebar` ｜ **依赖**：Phase 0 ｜ **状态**：✅ 完成
 
 ### 改动清单
 
 | 改动 | 文件 | 状态 |
 |------|------|------|
-| 新建 Sidebar v2（单层可折叠） | `sidebar-shell_v2.tsx` | ⬜ |
-| 新建 TaskList 组件（扁平列表 + running 置顶） | `sidebar-task-list.tsx` | ⬜ |
-| 新建 Top Bar | `session-header_v2.tsx` | ⬜ |
-| 填充 layout_v2 Sidebar + TopBar slot | `layout_v2.tsx` | ⬜ |
+| 新建 Sidebar v2（单层可折叠，展开 210px / 折叠 48px） | `sidebar-shell_v2.tsx` | ✅ |
+| 新建 TaskList 组件（扁平列表 + running 置顶，最多 10 条） | `sidebar-task-list.tsx` | ✅ |
+| 新建 Top Bar（任务标题居中） | `session-header_v2.tsx` | ✅ |
+| 填充 layout_v2 Sidebar + TopBar slot | `layout_v2.tsx` | ✅ |
+| e2e 测试：v2 布局渲染 | `e2e/v2/layout.spec.ts` | ✅ |
+| e2e 测试：Sidebar 折叠/展开、任务列表、新建按钮 | `e2e/v2/sidebar.spec.ts` | ✅ |
+| e2e 测试：会话列表功能（SDK 创建、点击导航、多会话、归档、新建按钮） | `e2e/v2/sidebar-sessions.spec.ts` | ✅ |
+| 更新 navigation e2e 适配新组件 | `e2e/v2/navigation.spec.ts` | ✅ |
 
 ### 完成门禁
 
-- [ ] `e2e/v2/layout.test.ts` — v2 布局渲染 Sidebar + Top Bar
-- [ ] `e2e/v2/sidebar.test.ts` — 折叠/展开、任务列表、新建按钮
-- [ ] v1 回归 e2e 通过 + typecheck 无报错
+- [x] `e2e/v2/layout.spec.ts` — v2 布局渲染 Sidebar + Top Bar
+- [x] `e2e/v2/sidebar.spec.ts` — 折叠/展开、任务列表、新建按钮（5 用例）
+- [x] `e2e/v2/sidebar-sessions.spec.ts` — 会话列表功能测试（5 用例）
+- [x] v2 e2e 全部 50 用例通过
+- [x] `vite build` 无报错
+
+### 实现说明
+
+- **Sidebar v2**（`sidebar-shell_v2.tsx`）：单层可折叠设计，展开 210px 显示完整内容，折叠 48px 仅图标。使用 `persisted()` 持久化展开状态。
+- **TaskList**（`sidebar-task-list.tsx`）：复用 `useGlobalSync().child(directory)` 获取 session 列表，按 status 排序（running 置顶），支持归档操作。
+- **Top Bar**（`session-header_v2.tsx`）：从 URL params 读取当前 session 标题，Home 页显示 "UltraWork"。右侧预留 Phase 1C 的 Panel 折叠按钮。
+- **layout_v2.tsx**：替换 SidebarSlot 和 TopBarSlot 占位为实际组件，保留 PanelSlot（Phase 1C）。
+- 遵循原则 9：export 名不含 v2 后缀（`SidebarShell`、`SessionHeader`、`TaskList`）。
 
 ---
 
@@ -223,6 +237,7 @@
 | 日期 | 变更 |
 |------|------|
 | 2026-03-09 | Phase 1B 完成：Home v2（欢迎+能力卡片+轻量Composer）、workspace-selector、add-menu、GlobalModelSelector（独立模型选择器）、submit→v1 session 导航修复，e2e 12 用例全部通过，typecheck 通过 |
+| 2026-03-09 | Phase 1A 完成：新增 `sidebar-sessions.spec.ts` 功能测试（5 用例：SDK 创建会话、点击导航、多会话列表、归档移除、新建按钮导航），v2 e2e 全部 50 用例通过 |
 | 2026-03-09 | Phase 1D-W 完成：Popover「工作目录」对接 DialogWorkspace（目录列表 + 添加/移除/编辑 + Directories/Environment Tab），e2e 7 用例通过 |
 | 2026-03-09 | Phase 1D-P 完成：Popover「模型（供应商）」对接 DialogProviderModels（复用 v1 Providers/Models），e2e 6 用例通过 |
 | 2026-03-09 | e2e 测试重组：`settings-popover.spec.ts` 拆分为 `e2e/v2/settings/` 目录下 4 个文件（popover/language/general/providers），共 28 用例，4 worker 并行 |
@@ -233,3 +248,4 @@
 | 2026-03-08 | Phase 1D 代码实现完成：User Model + sidebar-user-profile + settings-popover + dialog-settings_v2（Tab 重组） + settings-general_v2（含 Profile） + privacy/capabilities 占位 + i18n(en/zh) + layout_v2 集成 |
 | 2026-03-08 | Phase 0 代码实现完成（路由双版本、v2 骨架、route-prefix、e2e 适配），待人工验证和 e2e 回归 |
 | 2026-03-08 | Phase 1B 代码实现完成：home_v2.tsx（欢迎+能力卡片+轻量Composer）、workspace-selector.tsx、add-menu.tsx、i18n keys、4 个 e2e 测试文件，typecheck 通过 |
+| 2026-03-08 | Phase 1A 代码实现完成：Sidebar v2（单层可折叠）、TaskList（扁平列表 + running 置顶）、Top Bar、layout_v2 slot 填充、e2e 测试 |

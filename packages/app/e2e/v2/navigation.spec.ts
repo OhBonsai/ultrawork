@@ -6,10 +6,12 @@ test("v1 route renders original layout", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Open project" }).first()).toBeVisible()
 })
 
-test("v2 route renders v2 layout skeleton", async ({ page }) => {
+test("v2 route renders v2 layout with sidebar and topbar", async ({ page }) => {
   await page.goto("/")
-  // v2 home should show the v2 layout
+  // v2 home should show the v2 layout with real components
   await expect(page.locator('[data-component="v2-layout"]')).toBeVisible()
+  await expect(page.locator('[data-component="v2-sidebar"]')).toBeVisible()
+  await expect(page.locator('[data-component="v2-topbar"]')).toBeVisible()
   await expect(page.locator('[data-component="v2-home"]')).toBeVisible()
 })
 

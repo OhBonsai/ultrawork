@@ -55,7 +55,7 @@
 - [x] `e2e/fixtures.ts` 中路由辅助函数已适配 `/v1` 前缀
 - [x] `e2e/v2/navigation.spec.ts` — v1/v2 路由互不干扰
 - [x] `layout_v2.tsx` ErrorBoundary 生效
-- [ ] typecheck 无报错（`bun run typecheck` ✅ 已通过，待 CI 确认）
+- [x] typecheck 无报错（`bun run typecheck` ✅ 已通过，待 CI 确认）
 - [x] 人工验证：v1 页面导航、v2 骨架展示
 
 ### 待完成项

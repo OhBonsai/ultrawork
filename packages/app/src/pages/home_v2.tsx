@@ -309,8 +309,13 @@ export default function HomeV2() {
 
       const messageID = crypto.randomUUID()
 
-      // Send the prompt
-      await client.session.promptAsync({
+      // Navigate to v1 session view first (v2 session is not yet implemented)
+      // This ensures the session providers are available for message rendering
+      const dirSlug = base64Encode(dir)
+      navigate(`/v1/${dirSlug}/session/${sessionData.id}`)
+
+      // Send the prompt (fire-and-forget, session page will pick up the stream)
+      client.session.promptAsync({
         sessionID: sessionData.id,
         messageID,
         parts: [...textParts, ...fileParts],
@@ -319,9 +324,6 @@ export default function HomeV2() {
           providerID: model.provider.id,
         },
       })
-
-      // Navigate to the task view
-      navigate(`/task/${base64Encode(dir)}/${sessionData.id}`)
     } catch (err) {
       showToast({
         variant: "error",

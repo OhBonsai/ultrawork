@@ -49,7 +49,7 @@ test.describe("Settings Popover", () => {
   })
 
   test("unimplemented menu items show coming soon dialog", async ({ page }) => {
-    const comingSoonItems = ["workspace", "channels", "remote", "help", "about"]
+    const comingSoonItems = ["channels", "remote", "help", "about"]
 
     for (const item of comingSoonItems) {
       await page.locator('[data-action="open-settings-popover"]').click()

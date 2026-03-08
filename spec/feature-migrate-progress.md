@@ -15,7 +15,7 @@
 | **1B**  | Home 视图改造                 | ⬜ 未开始  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ⬜ 未开始  | `feature/v2-right-panel` |
 | **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
-| **1D-W** | 工作目录设置                  | 🟡 进行中  | `feature/v2-settings`    |
+| **1D-W** | 工作目录设置                  | ✅ 完成  | `feature/v2-settings`    |
 | **1D-P** | 模型（供应商）设置              | ✅ 完成  | `feature/v2-settings`    |
 | **2.1** | 定时任务                      | ⬜ 未开始  | —                        |
 | **2.2** | MCP / Skills / Plugins 开关 | ⬜ 未开始  | —                        |
@@ -152,7 +152,7 @@
 | i18n 国际化（全部 17 个 locale） | `i18n/*.ts` | ✅ |
 | UserProfileProvider 注册 | `app.tsx` | ✅ |
 | layout_v2 集成 UserSlot | `layout_v2.tsx` | ✅ |
-| e2e 测试（popover + 语言 + tab + 外观 + providers） | `e2e/v2/settings/*.spec.ts`（4 文件 28 用例） | ✅ |
+| e2e 测试（popover + 语言 + tab + 外观 + providers + workspace） | `e2e/v2/settings/*.spec.ts`（5 文件 35 用例） | ✅ |
 
 ### 1D-W 工作目录设置
 
@@ -161,7 +161,7 @@
 | Popover「工作目录」点击打开工作目录设置 | `settings-popover.tsx` | ✅ |
 | 工作目录管理弹窗（列表 + 添加 / 移除 / 编辑） | `dialog-workspace.tsx`（新文件） | ✅ |
 | i18n 国际化 | `i18n/*.ts` | ✅ |
-| e2e 测试 | `e2e/v2/settings-workspace.spec.ts` | ⬜ |
+| e2e 测试 | `e2e/v2/settings/workspace.spec.ts` | ✅ |
 
 ### 1D-P 模型（供应商）设置
 
@@ -178,7 +178,7 @@
 - [x] `e2e/v2/settings/language.spec.ts` — 语言切换（含 overflow/持久化/dialog 联动，10 用例）
 - [x] `e2e/v2/settings/general.spec.ts` — Tab 切换 + 外观设置（8 用例）
 - [x] `e2e/v2/settings/providers.spec.ts` — 模型供应商弹窗（6 用例）
-- [ ] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗
+- [x] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗（7 用例）
 - [x] typecheck 无报错
 
 ---
@@ -217,6 +217,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1D-W 完成：Popover「工作目录」对接 DialogWorkspace（目录列表 + 添加/移除/编辑 + Directories/Environment Tab），e2e 7 用例通过 |
 | 2026-03-09 | Phase 1D-P 完成：Popover「模型（供应商）」对接 DialogProviderModels（复用 v1 Providers/Models），e2e 6 用例通过 |
 | 2026-03-09 | e2e 测试重组：`settings-popover.spec.ts` 拆分为 `e2e/v2/settings/` 目录下 4 个文件（popover/language/general/providers），共 28 用例，4 worker 并行 |
 | 2026-03-09 | Phase 1D 扩展范围：新增 1D-W（工作目录设置）和 1D-P（模型供应商设置）子阶段，同一分支继续开发 |

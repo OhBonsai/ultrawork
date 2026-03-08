@@ -387,15 +387,15 @@ type ArtifactStore = {
 | 能力配置 Tab | **占位 UI**：同上 |
 | Providers/Models | 从 Tab 移至 Settings Popover 的弹窗入口，复用现有 `dialog-settings.tsx` 中的 Providers/Models 逻辑 |
 
-#### 1D-W 工作目录设置（Workspace）
+#### 1D-W 工作目录设置（Workspace）✅
 
 > 从 Popover 菜单的「工作目录」入口进入，管理本地工作目录列表。
 
 | 改动 | 文件 | 说明 |
 |------|------|------|
-| Popover 入口对接 | `settings-popover.tsx` | 点击「工作目录」打开工作目录管理弹窗（替换 Coming Soon） |
-| 工作目录管理弹窗 | → `dialog-workspace.tsx`（新文件） | 显示已配置的目录列表；支持添加（文件夹选择器）/ 移除 / 设为默认；数据源复用现有 `server` store 中的 projects 结构 |
-| i18n | `i18n/*.ts` | 新增工作目录相关文案 key |
+| Popover 入口对接 | `settings-popover.tsx` | ✅ 点击「工作目录」打开 `DialogWorkspace`（替换 Coming Soon） |
+| 工作目录管理弹窗 | `dialog-workspace.tsx` | ✅ Directories / Environment 两个 Tab；目录列表展示（名称+路径）；添加（文件夹选择器）/ 编辑 / 移除操作；数据源复用 `layout.projects` |
+| i18n | `i18n/*.ts` | ✅ 新增 `settingsV2.workspace.*` 文案 key（en/zh） |
 
 #### 1D-P 模型（供应商）设置（Providers & Models）✅
 
@@ -413,7 +413,7 @@ type ArtifactStore = {
 - [x] `e2e/v2/settings/language.spec.ts` — 语言切换（含 overflow/持久化/dialog 联动，10 用例）
 - [x] `e2e/v2/settings/general.spec.ts` — Tab 切换 + 外观设置（8 用例）
 - [x] `e2e/v2/settings/providers.spec.ts` — 模型供应商弹窗可打开；Providers/Models Tab 切换正常（6 用例）
-- [ ] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗可打开；目录列表可见；添加/移除操作正常
+- [x] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗可打开；Directories/Environment Tab 切换正常（7 用例）
 - [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
 
 ---

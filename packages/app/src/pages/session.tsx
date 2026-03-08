@@ -527,13 +527,13 @@ export default function Page() {
   function initGit() {
     if (ui.git) return
     setUi("git", true)
-    void sdk.client.project
+    void (sdk.client.project as any)
       .initGit()
-      .then((x) => {
+      .then((x: any) => {
         if (!x.data) return
         upsert(x.data)
       })
-      .catch((err) => {
+      .catch((err: any) => {
         showToast({
           variant: "error",
           title: language.t("common.requestFailed"),

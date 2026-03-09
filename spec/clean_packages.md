@@ -200,3 +200,51 @@ packages/
 | 9 | 删除 packages/ui、packages/util | 小 |
 | 10 | typecheck + build 验证 | 中 |
 | 11 | e2e 全量回归 | 中 |
+
+---
+
+## 五、执行结果（方案 A）
+
+> 执行日期：2026-03-09
+
+### 完成的工作
+
+1. **util 迁入 app/src/utils/**：11 个文件（array, binary, encode, error, fn, identifier, iife, lazy, path, retry, slug）
+2. **ui 迁入 app/src/ui/**：~180 个文件整体迁入
+3. **import 替换**：~481 处 `@opencode-ai/ui/` → `@/ui/`，~55 处 `@opencode-ai/util/` → `@/utils/`
+4. **desktop 引用**：4 处改为 `@opencode-ai/app/font`、`@opencode-ai/app/logo`、`@opencode-ai/app/progress`
+5. **app package.json exports**：新增 `./font`、`./logo`、`./progress` 导出
+6. **依赖合并**：ui/util 的外部依赖合入 app package.json
+7. **root workspaces**：从 4 个缩减为 2 个（app、desktop）
+8. **tsconfig.json**：新增 `src/**/*.json` include，排除 `**/*.stories.*`、`**/*.mdx`
+9. **broken symlinks**：修复 public/ 下 15 个指向旧 ui 目录的符号链接
+10. **删除 packages/ui/ 和 packages/util/**
+
+### 验证结果
+
+| 检查项 | 状态 |
+|--------|------|
+| `bun install` | ✅ |
+| app typecheck | ✅ |
+| desktop typecheck | ✅ |
+| app build | ✅ (12.4s) |
+| unit tests | ✅ (229 pass, 与合并前一致) |
+
+### 最终目录结构
+
+```
+packages/
+├── app/          # 业务应用 + UI 组件 + 工具函数
+│   ├── src/
+│   │   ├── components/   ← 业务组件
+│   │   ├── context/      ← 业务 context
+│   │   ├── pages/        ← 页面
+│   │   ├── utils/        ← 工具函数（含原 util 包）
+│   │   ├── ui/           ← UI 组件库（含原 ui 包）
+│   │   └── i18n/         ← 国际化
+│   └── package.json
+└── desktop/      # Tauri 桌面壳
+    ├── src/
+    ├── src-tauri/
+    └── package.json
+```

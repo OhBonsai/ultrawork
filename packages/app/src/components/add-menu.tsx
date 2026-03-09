@@ -1,5 +1,5 @@
-import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
-import { IconButton } from "@opencode-ai/ui/icon-button"
+import { DropdownMenu } from "@/ui/components/dropdown-menu"
+import { IconButton } from "@/ui/components/icon-button"
 import { useLanguage } from "@/context/language"
 import { ACCEPTED_IMAGE_TYPES, ACCEPTED_FILE_TYPES } from "@/components/prompt-input/attachments"
 

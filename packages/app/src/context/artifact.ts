@@ -1,5 +1,5 @@
 import { createStore, produce } from "solid-js/store"
-import { createSimpleContext } from "@opencode-ai/ui/context"
+import { createSimpleContext } from "@/ui/context"
 import { createMemo } from "solid-js"
 import type { Part, Message, FileDiff } from "@opencode-ai/sdk/v2/client"
 

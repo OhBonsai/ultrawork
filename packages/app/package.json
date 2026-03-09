@@ -6,7 +6,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./vite": "./vite.js",
-    "./index.css": "./src/index.css"
+    "./index.css": "./src/index.css",
+    "./font": "./src/ui/components/font.tsx",
+    "./logo": "./src/ui/components/logo.tsx",
+    "./progress": "./src/ui/components/progress.tsx"
   },
   "scripts": {
     "typecheck": "tsgo -b",
@@ -28,6 +31,7 @@
     "@playwright/test": "1.57.0",
     "@tailwindcss/vite": "catalog:",
     "@tsconfig/bun": "1.0.9",
+    "@types/katex": "0.16.7",
     "@types/bun": "catalog:",
     "@types/luxon": "catalog:",
     "@types/node": "catalog:",
@@ -40,9 +44,9 @@
   "dependencies": {
     "@kobalte/core": "catalog:",
     "@opencode-ai/sdk": "1.2.20",
-    "@opencode-ai/ui": "workspace:*",
-    "@opencode-ai/util": "workspace:*",
+    "@pierre/diffs": "catalog:",
     "@shikijs/transformers": "3.9.2",
+    "@solid-primitives/bounds": "0.1.3",
     "@solid-primitives/active-element": "2.1.3",
     "@solid-primitives/audio": "1.4.2",
     "@solid-primitives/i18n": "2.2.1",
@@ -56,16 +60,24 @@
     "@solidjs/router": "catalog:",
     "@thisbeyond/solid-dnd": "0.7.5",
     "diff": "catalog:",
+    "dompurify": "3.3.1",
     "fuzzysort": "catalog:",
     "ghostty-web": "github:anomalyco/ghostty-web#main",
+    "katex": "0.16.27",
     "luxon": "catalog:",
     "marked": "catalog:",
+    "marked-katex-extension": "5.1.6",
     "marked-shiki": "catalog:",
+    "morphdom": "2.7.8",
+    "motion": "12.34.5",
+    "motion-dom": "12.34.3",
+    "motion-utils": "12.29.2",
     "remeda": "catalog:",
     "shiki": "catalog:",
     "solid-js": "catalog:",
     "solid-list": "catalog:",
     "tailwindcss": "catalog:",
+    "strip-ansi": "7.1.2",
     "virtua": "catalog:",
     "zod": "catalog:"
   }

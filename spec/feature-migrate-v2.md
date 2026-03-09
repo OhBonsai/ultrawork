@@ -383,6 +383,27 @@ type ArtifactStore = {
 
 ---
 
+### Phase 1E：Package 合并（ui + util → app）
+
+**目标**：将 `packages/ui` 和 `packages/util` 合并到 `packages/app`，monorepo 只保留 `app` + `desktop` 两个 package。
+
+> 详细分析见 [clean_packages.md](./clean_packages.md)
+
+| 改动 | 说明 |
+|------|------|
+| util → app/src/utils/ | 11 个工具函数文件（array, binary, encode, error, fn, identifier, iife, lazy, path, retry, slug） |
+| ui → app/src/ui/ | ~180 个文件整体迁入（components, context, theme, hooks, pierre, styles, assets） |
+| import 替换 | ~481 处 `@opencode-ai/ui/` → `@/ui/`，~55 处 `@opencode-ai/util/` → `@/utils/` |
+| desktop 引用 | 4 处改为 `@opencode-ai/app/{font,logo,progress}` re-export |
+| 依赖合并 | ui/util 的外部依赖合入 app package.json |
+| workspaces 缩减 | 根 package.json workspaces 从 4 个缩减为 2 个 |
+| broken symlinks | public/ 下 15 个符号链接修复（favicon, social-share 等） |
+| 删除旧包 | `packages/ui/` 和 `packages/util/` 目录已删除 |
+
+- [x] `bun install` ✅ / app typecheck ✅ / desktop typecheck ✅ / app build ✅ / unit tests 229 pass
+
+---
+
 ### Phase 1D：用户 Profile + Settings 壳
 
 **依赖**：Phase 0 ｜ **分支**：`feature/v2-settings` ｜ **可并行开发**：1A, 1B, 1C ｜ **1A 合入后 rebase 再合入**

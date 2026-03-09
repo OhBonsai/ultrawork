@@ -1,5 +1,5 @@
 import { Component } from "solid-js"
-import { Dialog } from "@opencode-ai/ui/dialog"
+import { Dialog } from "@/ui/components/dialog"
 import { useLanguage } from "@/context/language"
 
 interface DialogComingSoonProps {

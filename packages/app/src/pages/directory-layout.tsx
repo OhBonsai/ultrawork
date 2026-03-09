@@ -7,10 +7,10 @@ import { LocalProvider } from "@/context/local"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { useRoutePrefix } from "@/context/route-prefix"
 
-import { DataProvider } from "@opencode-ai/ui/context"
-import { base64Encode } from "@opencode-ai/util/encode"
+import { DataProvider } from "@/ui/context"
+import { base64Encode } from "@/utils/encode"
 import { decode64 } from "@/utils/base64"
-import { showToast } from "@opencode-ai/ui/toast"
+import { showToast } from "@/ui/components/toast"
 import { useLanguage } from "@/context/language"
 function DirectoryDataProvider(props: ParentProps<{ directory: string }>) {
   const navigate = useNavigate()

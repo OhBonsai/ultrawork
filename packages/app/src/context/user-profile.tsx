@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js"
 import { createStore } from "solid-js/store"
-import { createSimpleContext } from "@opencode-ai/ui/context"
+import { createSimpleContext } from "@/ui/context"
 import { Persist, persisted } from "@/utils/persist"
 
 export interface UserProfile {

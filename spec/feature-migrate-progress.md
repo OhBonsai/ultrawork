@@ -15,6 +15,7 @@
 | **1B**  | Home 视图改造                 | ✅ 完成  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ✅ 完成 | `feature/v2-right-panel` |
 | **1C+** | Panel 增强（Context tab、preview 交互、composer 简化） | ✅ 完成 | `dev-openwork` |
+| **1E**  | Package 合并（ui + util → app）  | ✅ 完成 | `dev-openwork` |
 | **1D**  | 用户 Profile + Settings 壳   | ✅ 完成 | `feature/v2-settings`    |
 | **1D-W** | 工作目录设置                  | ✅ 完成  | `feature/v2-settings`    |
 | **1D-P** | 模型（供应商）设置              | ✅ 完成  | `feature/v2-settings`    |
@@ -240,6 +241,35 @@
 
 ---
 
+## Phase 1E：Package 合并（ui + util → app）
+
+**分支**：`dev-openwork` ｜ **依赖**：Phase 1C+ ｜ **状态**：✅ 完成
+
+### 改动清单
+
+| 改动 | 说明 | 状态 |
+|------|------|------|
+| util 迁入 app | `packages/util/src/*.ts`（11 文件）→ `packages/app/src/utils/` | ✅ |
+| ui 迁入 app | `packages/ui/src/`（~180 文件）→ `packages/app/src/ui/` | ✅ |
+| import 替换（app） | ~481 处 `@opencode-ai/ui/` → `@/ui/`，~55 处 `@opencode-ai/util/` → `@/utils/` | ✅ |
+| desktop 引用更新 | 4 处改为 `@opencode-ai/app/font`、`/logo`、`/progress` | ✅ |
+| app re-export | `package.json` exports 新增 `./font`、`./logo`、`./progress` | ✅ |
+| 依赖合并 | ui/util 外部依赖合入 app `package.json` | ✅ |
+| root workspaces | 4 → 2（app、desktop） | ✅ |
+| tsconfig 调整 | 新增 `src/**/*.json` include，排除 `**/*.stories.*`、`**/*.mdx` | ✅ |
+| 修复 broken symlinks | public/ 下 15 个符号链接指向旧 ui 目录，全部修复 | ✅ |
+| 删除旧包 | `packages/ui/`、`packages/util/` 已删除 | ✅ |
+
+### 完成门禁
+
+- [x] `bun install` 无报错
+- [x] app typecheck ✅
+- [x] desktop typecheck ✅
+- [x] app build ✅ (12.4s)
+- [x] unit tests 229 pass（与合并前一致）
+
+---
+
 ## Phase 2：全新功能
 
 **依赖**：Phase 1 全部合入 ｜ **状态**：⬜ 未开始
@@ -274,6 +304,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1E 完成：Package 合并（ui + util → app），monorepo 缩减为 2 个 package（app + desktop），~536 处 import 替换，修复 15 个 broken symlinks，tag v0.0.8 |
 | 2026-03-09 | Phase 1C+ 追加：全局任务列表（聚合所有工作区 session、去重、按活跃时间倒序 max 10）、窗口拖动修复（header+sidebar drag region）、"新建会话"→"新建任务"、macOS 红绿灯按钮避让、e2e 2 新增用例，tag v0.0.7 |
 | 2026-03-09 | Phase 1C+ 完成：Header 布局优化（标题居中+toggle portal 修复）、Preview 打开文件夹按钮、Preview 隐藏列表面板、Preview 宽度=session 对半、Context tab（MCP+Skills）、v2 Composer 简化（隐藏 shell/agent/permissions）、CI DMG bundling 修复（bypass Tauri bundle_dmg.sh 改用 hdiutil），e2e 3 新增用例 |
 | 2026-03-10 | Phase 1C 完成：Side Panel v2 + Artifact Store + 产物列表 + 多格式预览器 + DirectoryLayoutV2 Provider + i18n + e2e 12 用例（side-panel/artifact-preview/task-execution），修复 artifact-list useArtifact 作用域 bug、artifact-preview srcDoc/FileContent 类型错误 |

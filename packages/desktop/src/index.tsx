@@ -9,7 +9,7 @@ import {
   ServerConnection,
   useCommand,
 } from "@opencode-ai/app"
-import { Splash } from "@opencode-ai/ui/logo"
+import { Splash } from "@opencode-ai/app/logo"
 import type { AsyncStorage } from "@solid-primitives/storage"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { readImage } from "@tauri-apps/plugin-clipboard-manager"

@@ -1,15 +1,15 @@
 import { Popover as Kobalte } from "@kobalte/core/popover"
 import { createMemo, createSignal, For, Show } from "solid-js"
-import { Button } from "@opencode-ai/ui/button"
-import { Icon } from "@opencode-ai/ui/icon"
+import { Button } from "@/ui/components/button"
+import { Icon } from "@/ui/components/icon"
 import { useGlobalSync } from "@/context/global-sync"
 import { useLanguage } from "@/context/language"
 import { useLayout } from "@/context/layout"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { useDialog } from "@/ui/context/dialog"
 import { usePlatform } from "@/context/platform"
 import { useServer } from "@/context/server"
 import { DialogSelectDirectory } from "@/components/dialog-select-directory"
-import { getFilename } from "@opencode-ai/util/path"
+import { getFilename } from "@/utils/path"
 
 interface WorkspaceSelectorProps {
   selected: string | undefined

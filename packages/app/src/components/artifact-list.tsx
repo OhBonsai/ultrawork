@@ -1,5 +1,5 @@
 import { For, Show, createMemo } from "solid-js"
-import { Icon } from "@opencode-ai/ui/icon"
+import { Icon } from "@/ui/components/icon"
 import { useLanguage } from "@/context/language"
 import { useArtifact, type Artifact } from "@/context/artifact"
 

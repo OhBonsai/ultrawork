@@ -16,7 +16,7 @@ import os from "node:os"
 import path from "node:path"
 import { chromium, type Page, type Locator } from "@playwright/test"
 import { createOpencodeClient } from "@opencode-ai/sdk/v2/client"
-import { base64Encode } from "@opencode-ai/util/encode"
+import { base64Encode } from "../src/utils/encode"
 
 // ── helpers ──────────────────────────────────────────────────────────────
 

@@ -151,7 +151,7 @@ test("new task button creates a new session inline", async ({ page }) => {
 
     // Click "New session" button in sidebar
     const sidebar = page.locator('[data-component="v2-sidebar"]')
-    const newButton = sidebar.getByRole("button").filter({ hasText: /new session/i })
+    const newButton = sidebar.getByRole("button").filter({ hasText: /new task/i })
     await expect(newButton).toBeVisible()
     await newButton.click()
 
@@ -174,5 +174,90 @@ test("new task button creates a new session inline", async ({ page }) => {
     }
     await cleanupSession({ sdk, sessionID: session.id })
     await cleanupTestProject(directory)
+  }
+})
+
+test("new task creates session in the current (first) workspace", async ({ page }) => {
+  const dir1 = await createTestProject()
+  const dir2 = await createTestProject()
+  const sdk1 = createSdk(dir1)
+
+  // Seed two workspaces — dir1 is first (current)
+  await seedProjects(page, { directory: dir1, extra: [dir2] })
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "opencode.global.dat:model",
+      JSON.stringify({
+        recent: [{ providerID: "opencode", modelID: "big-pickle" }],
+        user: [],
+        variant: {},
+      }),
+    )
+  })
+
+  const slug1 = dirSlug(dir1)
+  const createdSessionIds: string[] = []
+
+  try {
+    await page.goto("/")
+    await expect(page.locator('[data-component="v2-sidebar"]')).toBeVisible()
+
+    // Click "New task" button
+    const sidebar = page.locator('[data-component="v2-sidebar"]')
+    const newButton = sidebar.getByRole("button").filter({ hasText: /new task/i })
+    await expect(newButton).toBeVisible({ timeout: 10_000 })
+    await newButton.click()
+
+    // Should navigate to a task URL with the first workspace's slug
+    await expect(page).toHaveURL(new RegExp(`/task/${slug1}/`), { timeout: 10_000 })
+
+    const url = page.url()
+    const newSessionId = url.split("/").pop()
+    if (newSessionId) createdSessionIds.push(newSessionId)
+  } finally {
+    for (const id of createdSessionIds) {
+      await cleanupSession({ sdk: sdk1, sessionID: id }).catch(() => {})
+    }
+    await cleanupTestProject(dir1)
+    await cleanupTestProject(dir2)
+  }
+})
+
+test("task list shows sessions from multiple workspaces", async ({ page }) => {
+  const dir1 = await createTestProject()
+  const dir2 = await createTestProject()
+  const sdk1 = createSdk(dir1)
+  const sdk2 = createSdk(dir2)
+
+  await seedProjects(page, { directory: dir1, extra: [dir2] })
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "opencode.global.dat:model",
+      JSON.stringify({
+        recent: [{ providerID: "opencode", modelID: "big-pickle" }],
+        user: [],
+        variant: {},
+      }),
+    )
+  })
+
+  const stamp = Date.now()
+  const s1 = await sdk1.session.create({ title: `e2e ws1 ${stamp}` }).then((r) => r.data)
+  const s2 = await sdk2.session.create({ title: `e2e ws2 ${stamp}` }).then((r) => r.data)
+
+  if (!s1?.id || !s2?.id) throw new Error("Session create failed")
+
+  try {
+    await page.goto("/")
+    const sidebar = page.locator('[data-component="v2-sidebar"]')
+
+    // Both sessions from different workspaces should appear
+    await expect(sidebar.locator(`[data-session-id="${s1.id}"]`)).toBeVisible({ timeout: 10_000 })
+    await expect(sidebar.locator(`[data-session-id="${s2.id}"]`)).toBeVisible({ timeout: 10_000 })
+  } finally {
+    await cleanupSession({ sdk: sdk1, sessionID: s1.id })
+    await cleanupSession({ sdk: sdk2, sessionID: s2.id })
+    await cleanupTestProject(dir1)
+    await cleanupTestProject(dir2)
   }
 })

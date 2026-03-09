@@ -2,6 +2,7 @@ import type { UserMessage } from "@opencode-ai/sdk/v2"
 import {
   Show,
   createMemo,
+  createSignal,
   createEffect,
   createComputed,
   on,
@@ -590,7 +591,20 @@ export default function SessionV2() {
     if (scrollStateFrame !== undefined) cancelAnimationFrame(scrollStateFrame)
   })
 
-  const rightMount = createMemo(() => document.getElementById("v2-topbar-right"))
+  const [rightMount, setRightMount] = createSignal<HTMLElement | null>(null)
+
+  onMount(() => {
+    // Wait for header to render, then resolve portal mount point
+    const resolve = () => {
+      const el = document.getElementById("v2-topbar-right")
+      if (el) {
+        setRightMount(el)
+        return
+      }
+      requestAnimationFrame(resolve)
+    }
+    resolve()
+  })
 
   return (
     <ArtifactProvider>

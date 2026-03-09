@@ -116,22 +116,24 @@ export function SessionHeader() {
         </Tooltip>
       </div>
 
-      {/* Center: task title */}
-      <div class="flex min-w-0 flex-1 items-center justify-center">
-        <Show when={isSessionView()}>
-          <span class="max-w-md truncate text-13 text-text-strong">
-            {sessionTitle()}
-          </span>
-        </Show>
-        <Show when={!isSessionView()}>
-          <span class="text-13 text-text-dimmed">
-            UltraWork
-          </span>
-        </Show>
-      </div>
+      {/* Center + Right: title centered, panel toggle pinned right with separator */}
+      <div class="flex min-w-0 flex-1 items-center">
+        <div class="flex min-w-0 flex-1 items-center justify-center">
+          <Show when={isSessionView()}>
+            <span class="max-w-md truncate text-13 text-text-strong">
+              {sessionTitle()}
+            </span>
+          </Show>
+          <Show when={!isSessionView()}>
+            <span class="text-13 text-text-dimmed">
+              UltraWork
+            </span>
+          </Show>
+        </div>
 
-      {/* Right: portal slot for session-level controls (panel toggle etc.) */}
-      <div class="flex shrink-0 items-center gap-1" id="v2-topbar-right" data-component="v2-topbar-right">
+        {/* Right: portal slot for session-level controls (panel toggle etc.) */}
+        <div class="flex shrink-0 items-center gap-1" id="v2-topbar-right" data-component="v2-topbar-right">
+        </div>
       </div>
     </div>
   )

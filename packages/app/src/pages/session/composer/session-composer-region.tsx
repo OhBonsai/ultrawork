@@ -21,6 +21,8 @@ export function SessionComposerRegion(props: {
   onSubmit: () => void
   onResponseSubmit: () => void
   setPromptDockRef: (el: HTMLDivElement) => void
+  /** V2 simplified mode: hides shell toggle, agent selector, permissions button */
+  simplified?: boolean
   visualDuration?: number
   bounce?: number
   dockOpenVisualDuration?: number
@@ -222,6 +224,7 @@ export function SessionComposerRegion(props: {
                 newSessionWorktree={props.newSessionWorktree}
                 onNewSessionWorktreeReset={props.onNewSessionWorktreeReset}
                 onSubmit={props.onSubmit}
+                simplified={props.simplified}
               />
             </div>
           </Show>

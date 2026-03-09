@@ -662,6 +662,7 @@ export default function SessionV2() {
             state={composer}
             ready={!store.deferRender && messagesReady()}
             centered={true}
+            simplified={true}
             inputRef={(el) => {
               inputRef = el
             }}

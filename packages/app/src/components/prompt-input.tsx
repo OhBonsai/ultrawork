@@ -62,6 +62,8 @@ interface PromptInputProps {
   newSessionWorktree?: string
   onNewSessionWorktreeReset?: () => void
   onSubmit?: () => void
+  /** V2 simplified mode: hides shell toggle, agent selector, and permissions button */
+  simplified?: boolean
 }
 
 const EXAMPLES = [
@@ -1313,90 +1315,96 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
             </div>
           </div>
 
-          <div class="pointer-events-none absolute bottom-2 left-2">
-            <div class="pointer-events-auto">
-              <TooltipKeybind
-                placement="top"
-                gutter={8}
-                title={language.t(
-                  accepting() ? "command.permissions.autoaccept.disable" : "command.permissions.autoaccept.enable",
-                )}
-                keybind={command.keybind("permissions.autoaccept")}
-              >
-                <Button
-                  data-action="prompt-permissions"
-                  variant="ghost"
-                  onClick={() => {
-                    if (!params.id) {
-                      permission.toggleAutoAcceptDirectory(sdk.directory)
-                      return
-                    }
-                    permission.toggleAutoAccept(params.id, sdk.directory)
-                  }}
-                  classList={{
-                    "size-6 flex items-center justify-center": true,
-                    "text-text-base": !accepting(),
-                    "hover:bg-surface-success-base": accepting(),
-                  }}
-                  aria-label={
-                    accepting()
-                      ? language.t("command.permissions.autoaccept.disable")
-                      : language.t("command.permissions.autoaccept.enable")
-                  }
-                  aria-pressed={accepting()}
+          <Show when={!props.simplified}>
+            <div class="pointer-events-none absolute bottom-2 left-2">
+              <div class="pointer-events-auto">
+                <TooltipKeybind
+                  placement="top"
+                  gutter={8}
+                  title={language.t(
+                    accepting() ? "command.permissions.autoaccept.disable" : "command.permissions.autoaccept.enable",
+                  )}
+                  keybind={command.keybind("permissions.autoaccept")}
                 >
-                  <Icon
-                    name="chevron-double-right"
-                    size="small"
-                    classList={{ "text-icon-success-base": accepting() }}
-                  />
-                </Button>
-              </TooltipKeybind>
+                  <Button
+                    data-action="prompt-permissions"
+                    variant="ghost"
+                    onClick={() => {
+                      if (!params.id) {
+                        permission.toggleAutoAcceptDirectory(sdk.directory)
+                        return
+                      }
+                      permission.toggleAutoAccept(params.id, sdk.directory)
+                    }}
+                    classList={{
+                      "size-6 flex items-center justify-center": true,
+                      "text-text-base": !accepting(),
+                      "hover:bg-surface-success-base": accepting(),
+                    }}
+                    aria-label={
+                      accepting()
+                        ? language.t("command.permissions.autoaccept.disable")
+                        : language.t("command.permissions.autoaccept.enable")
+                    }
+                    aria-pressed={accepting()}
+                  >
+                    <Icon
+                      name="chevron-double-right"
+                      size="small"
+                      classList={{ "text-icon-success-base": accepting() }}
+                    />
+                  </Button>
+                </TooltipKeybind>
+              </div>
             </div>
-          </div>
+          </Show>
         </div>
       </DockShellForm>
       <Show when={store.mode === "normal" || store.mode === "shell"}>
         <DockTray attach="top">
           <div class="px-1.75 pt-5.5 pb-2 flex items-center gap-2 min-w-0">
             <div class="flex items-center gap-1.5 min-w-0 flex-1 relative">
-              <div
-                class="h-7 flex items-center gap-1.5 max-w-[160px] min-w-0 absolute inset-y-0 left-0"
-                style={{
-                  padding: "0 4px 0 8px",
-                  opacity: 1 - buttonsSpring(),
-                  transform: `scale(${0.95 + (1 - buttonsSpring()) * 0.05})`,
-                  filter: `blur(${buttonsSpring() * 2}px)`,
-                  "pointer-events": buttonsSpring() < 0.5 ? "auto" : "none",
-                }}
-              >
-                <span class="truncate text-13-medium text-text-strong">{language.t("prompt.mode.shell")}</span>
-                <div class="size-4 shrink-0" />
-              </div>
-              <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                <TooltipKeybind
-                  placement="top"
-                  gutter={4}
-                  title={language.t("command.agent.cycle")}
-                  keybind={command.keybind("agent.cycle")}
+              <Show when={!props.simplified}>
+                <div
+                  class="h-7 flex items-center gap-1.5 max-w-[160px] min-w-0 absolute inset-y-0 left-0"
+                  style={{
+                    padding: "0 4px 0 8px",
+                    opacity: 1 - buttonsSpring(),
+                    transform: `scale(${0.95 + (1 - buttonsSpring()) * 0.05})`,
+                    filter: `blur(${buttonsSpring() * 2}px)`,
+                    "pointer-events": buttonsSpring() < 0.5 ? "auto" : "none",
+                  }}
                 >
-                  <Select
-                    size="normal"
-                    options={agentNames()}
-                    current={local.agent.current()?.name ?? ""}
-                    onSelect={local.agent.set}
-                    class="capitalize max-w-[160px]"
-                    valueClass="truncate text-13-regular"
-                    triggerStyle={{
-                      height: "28px",
-                      opacity: buttonsSpring(),
-                      transform: `scale(${0.95 + buttonsSpring() * 0.05})`,
-                      filter: `blur(${(1 - buttonsSpring()) * 2}px)`,
-                      "pointer-events": buttonsSpring() > 0.5 ? "auto" : "none",
-                    }}
-                    variant="ghost"
-                  />
-                </TooltipKeybind>
+                  <span class="truncate text-13-medium text-text-strong">{language.t("prompt.mode.shell")}</span>
+                  <div class="size-4 shrink-0" />
+                </div>
+              </Show>
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <Show when={!props.simplified}>
+                  <TooltipKeybind
+                    placement="top"
+                    gutter={4}
+                    title={language.t("command.agent.cycle")}
+                    keybind={command.keybind("agent.cycle")}
+                  >
+                    <Select
+                      size="normal"
+                      options={agentNames()}
+                      current={local.agent.current()?.name ?? ""}
+                      onSelect={local.agent.set}
+                      class="capitalize max-w-[160px]"
+                      valueClass="truncate text-13-regular"
+                      triggerStyle={{
+                        height: "28px",
+                        opacity: buttonsSpring(),
+                        transform: `scale(${0.95 + buttonsSpring() * 0.05})`,
+                        filter: `blur(${(1 - buttonsSpring()) * 2}px)`,
+                        "pointer-events": buttonsSpring() > 0.5 ? "auto" : "none",
+                      }}
+                      variant="ghost"
+                    />
+                  </TooltipKeybind>
+                </Show>
                 <Show
                   when={providers.paid().length > 0}
                   fallback={
@@ -1496,36 +1504,38 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                 </TooltipKeybind>
               </div>
             </div>
-            <div class="shrink-0">
-              <RadioGroup
-                options={["shell", "normal"] as const}
-                current={store.mode}
-                value={(mode) => mode}
-                label={(mode) => (
-                  <TooltipKeybind
-                    placement="top"
-                    gutter={4}
-                    openDelay={2000}
-                    title={language.t(mode === "shell" ? "prompt.mode.shell" : "prompt.mode.normal")}
-                    keybind={command.keybind(mode === "shell" ? "prompt.mode.shell" : "prompt.mode.normal")}
-                    class="size-full flex items-center justify-center"
-                  >
-                    <Icon
-                      name={mode === "shell" ? "console" : "prompt"}
-                      class="size-[18px]"
-                      classList={{
-                        "text-icon-strong-base": store.mode === mode,
-                        "text-icon-weak": store.mode !== mode,
-                      }}
-                    />
-                  </TooltipKeybind>
-                )}
-                onSelect={(mode) => mode && setMode(mode)}
-                fill
-                pad="none"
-                class="w-[68px]"
-              />
-            </div>
+            <Show when={!props.simplified}>
+              <div class="shrink-0">
+                <RadioGroup
+                  options={["shell", "normal"] as const}
+                  current={store.mode}
+                  value={(mode) => mode}
+                  label={(mode) => (
+                    <TooltipKeybind
+                      placement="top"
+                      gutter={4}
+                      openDelay={2000}
+                      title={language.t(mode === "shell" ? "prompt.mode.shell" : "prompt.mode.normal")}
+                      keybind={command.keybind(mode === "shell" ? "prompt.mode.shell" : "prompt.mode.normal")}
+                      class="size-full flex items-center justify-center"
+                    >
+                      <Icon
+                        name={mode === "shell" ? "console" : "prompt"}
+                        class="size-[18px]"
+                        classList={{
+                          "text-icon-strong-base": store.mode === mode,
+                          "text-icon-weak": store.mode !== mode,
+                        }}
+                      />
+                    </TooltipKeybind>
+                  )}
+                  onSelect={(mode) => mode && setMode(mode)}
+                  fill
+                  pad="none"
+                  class="w-[68px]"
+                />
+              </div>
+            </Show>
           </div>
         </DockTray>
       </Show>

@@ -376,6 +376,7 @@ type ArtifactStore = {
 | 窗口拖动修复 | header + sidebar 顶部增加 `data-tauri-drag-region` |
 | 全局任务列表 | TaskList 聚合所有工作区 session，按活跃时间倒序，running 置顶，max 10，按 session ID 去重 |
 | "新建任务" | "新建会话" → "新建任务"（en/zh），新建任务使用当前工作区创建 session |
+| macOS 红绿灯避让 | sidebar 顶部展开状态增加 78px 左 padding，避免 macOS traffic light 按钮遮挡标题 |
 
 - [x] `e2e/v2/side-panel.spec.ts` — Context tab、三 tab 切换（3 新增用例，共 7 用例）
 - [x] `e2e/v2/sidebar-sessions.spec.ts` — 跨工作区任务列表、新建任务工作区确认（2 新增用例，共 7 用例）

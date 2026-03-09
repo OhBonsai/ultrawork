@@ -229,6 +229,7 @@
 | "新建会话" → "新建任务"，新建任务使用当前工作区 | `sidebar-shell_v2.tsx`, `i18n/en.ts`, `i18n/zh.ts` | ✅ |
 | 全局任务列表去重（同目录多 workspace 场景） | `sidebar-task-list.tsx` | ✅ |
 | 新增 e2e：跨工作区任务列表、新建任务工作区确认 | `e2e/v2/sidebar-sessions.spec.ts` | ✅ |
+| macOS 红绿灯按钮避让：sidebar 顶部增加 78px 左 padding | `sidebar-shell_v2.tsx` | ✅ |
 
 ### 完成门禁
 
@@ -273,7 +274,7 @@
 
 | 日期 | 变更 |
 |------|------|
-| 2026-03-09 | Phase 1C+ 追加：全局任务列表（聚合所有工作区 session、去重、按活跃时间倒序 max 10）、窗口拖动修复（header+sidebar drag region）、"新建会话"→"新建任务"、e2e 2 新增用例（跨工作区列表+新建任务工作区确认），tag v0.0.7 |
+| 2026-03-09 | Phase 1C+ 追加：全局任务列表（聚合所有工作区 session、去重、按活跃时间倒序 max 10）、窗口拖动修复（header+sidebar drag region）、"新建会话"→"新建任务"、macOS 红绿灯按钮避让、e2e 2 新增用例，tag v0.0.7 |
 | 2026-03-09 | Phase 1C+ 完成：Header 布局优化（标题居中+toggle portal 修复）、Preview 打开文件夹按钮、Preview 隐藏列表面板、Preview 宽度=session 对半、Context tab（MCP+Skills）、v2 Composer 简化（隐藏 shell/agent/permissions）、CI DMG bundling 修复（bypass Tauri bundle_dmg.sh 改用 hdiutil），e2e 3 新增用例 |
 | 2026-03-10 | Phase 1C 完成：Side Panel v2 + Artifact Store + 产物列表 + 多格式预览器 + DirectoryLayoutV2 Provider + i18n + e2e 12 用例（side-panel/artifact-preview/task-execution），修复 artifact-list useArtifact 作用域 bug、artifact-preview srcDoc/FileContent 类型错误 |
 | 2026-03-09 | Phase 1B 完成：Home v2（欢迎+能力卡片+轻量Composer）、workspace-selector、add-menu、GlobalModelSelector（独立模型选择器）、submit→v1 session 导航修复，e2e 12 用例全部通过，typecheck 通过 |

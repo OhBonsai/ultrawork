@@ -7,6 +7,7 @@ import { base64Encode } from "@opencode-ai/util/encode"
 import { createMemo, createSignal, type Accessor, type JSX, Show } from "solid-js"
 import { useLanguage } from "@/context/language"
 import { useLayout } from "@/context/layout"
+import { usePlatform } from "@/context/platform"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { useGlobalSync } from "@/context/global-sync"
 import { Persist, persisted } from "@/utils/persist"
@@ -25,6 +26,8 @@ const SIDEBAR_COLLAPSED_WIDTH = 48
 export function SidebarShell() {
   const language = useLanguage()
   const layout = useLayout()
+  const platform = usePlatform()
+  const mac = createMemo(() => platform.platform === "desktop" && platform.os === "macos")
 
   const [state, setState] = persisted(
     Persist.global("sidebar.v2", ["sidebar.v2"]),
@@ -56,8 +59,12 @@ export function SidebarShell() {
         class="flex shrink-0 items-center border-b border-color-border-base"
         data-tauri-drag-region
         classList={{
-          "justify-between px-3 h-12": expanded(),
+          "justify-between h-12": expanded(),
           "justify-center h-12": !expanded(),
+        }}
+        style={{
+          "padding-left": expanded() ? (mac() ? "78px" : "12px") : undefined,
+          "padding-right": expanded() ? "12px" : undefined,
         }}
       >
         <Show when={expanded()}>

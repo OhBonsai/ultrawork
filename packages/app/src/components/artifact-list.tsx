@@ -57,17 +57,6 @@ export function ArtifactList() {
 
   return (
     <div class="flex h-full flex-col overflow-hidden">
-      <div class="flex shrink-0 items-center justify-between border-b border-color-border-base px-3 py-2">
-        <span class="text-12-medium text-color-text-primary-base">
-          {language.t("v2.artifact.title")}
-        </span>
-        <Show when={hasArtifacts()}>
-          <span class="text-11 text-color-text-dimmed">
-            {artifact.artifacts.length}
-          </span>
-        </Show>
-      </div>
-
       <div class="flex-1 overflow-y-auto px-1 py-1">
         <Show
           when={hasArtifacts()}

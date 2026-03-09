@@ -309,10 +309,8 @@ export default function HomeV2() {
 
       const messageID = crypto.randomUUID()
 
-      // Navigate to v1 session view first (v2 session is not yet implemented)
-      // This ensures the session providers are available for message rendering
       const dirSlug = base64Encode(dir)
-      navigate(`/v1/${dirSlug}/session/${sessionData.id}`)
+      navigate(`/task/${dirSlug}/${sessionData.id}`)
 
       // Send the prompt (fire-and-forget, session page will pick up the stream)
       client.session.promptAsync({

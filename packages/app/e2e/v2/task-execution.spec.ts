@@ -21,16 +21,15 @@ test.describe("V2 Task Execution", () => {
     })
   })
 
-  test("v2 session shows task view with params", async ({ page, directory }) => {
+  test("v2 session shows composer and session view", async ({ page, directory }) => {
     const sdk = createSdk(directory)
 
     await withSession(sdk, "task-params-test", async (session) => {
       await page.goto(v2SessionPath(directory, session.id))
       await expect(page.locator('[data-component="v2-session"]')).toBeVisible()
 
-      // Session should display dir and id params (placeholder content)
-      const sessionView = page.locator('[data-component="v2-session"]')
-      await expect(sessionView.getByText("Task View")).toBeVisible()
+      // Session should show the composer input
+      await expect(page.locator('[data-component="v2-session"] [contenteditable]').first()).toBeVisible({ timeout: 10_000 })
     })
   })
 
@@ -39,7 +38,7 @@ test.describe("V2 Task Execution", () => {
 
     await expect(page.locator('[data-component="v2-layout"]')).toBeVisible()
     await expect(page.locator('[data-component="v2-home"]')).toBeVisible()
-    await expect(page.getByText("UltraWork")).toBeVisible()
+    await expect(page.getByText("UltraWork").first()).toBeVisible()
   })
 
   test("navigating between home and session preserves layout", async ({ page, directory }) => {

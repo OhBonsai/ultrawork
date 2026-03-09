@@ -65,7 +65,9 @@ const HomeV2Route = () => (
 const SessionV2Route = () => (
   <Suspense fallback={<Loading />}>
     <DirectoryLayoutV2>
-      <SessionV2 />
+      <SessionProviders>
+        <SessionV2 />
+      </SessionProviders>
     </DirectoryLayoutV2>
   </Suspense>
 )

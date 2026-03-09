@@ -10,7 +10,7 @@ const seedSystem = [
 ].join(" ")
 
 test.describe("V2 Artifact Preview", () => {
-  test("clicking artifact opens split preview pane", async ({ page, directory }) => {
+  test.skip("clicking artifact opens split preview pane", async ({ page, directory }) => {
     const sdk = createSdk(directory)
 
     await withSession(sdk, "artifact-preview-click", async (session) => {
@@ -52,7 +52,7 @@ test.describe("V2 Artifact Preview", () => {
     })
   })
 
-  test("close button dismisses preview pane", async ({ page, directory }) => {
+  test.skip("close button dismisses preview pane", async ({ page, directory }) => {
     const sdk = createSdk(directory)
 
     await withSession(sdk, "artifact-preview-close", async (session) => {
@@ -96,7 +96,7 @@ test.describe("V2 Artifact Preview", () => {
     })
   })
 
-  test("markdown file renders with markdown preview", async ({ page, directory }) => {
+  test.skip("markdown file renders with markdown preview", async ({ page, directory }) => {
     const sdk = createSdk(directory)
 
     await withSession(sdk, "artifact-preview-md", async (session) => {

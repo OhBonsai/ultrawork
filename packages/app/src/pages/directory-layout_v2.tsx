@@ -1,10 +1,30 @@
 import { createEffect, createMemo, Show, type ParentProps } from "solid-js"
 import { createStore } from "solid-js/store"
-import { useParams } from "@solidjs/router"
+import { useNavigate, useParams } from "@solidjs/router"
+import { base64Encode } from "@opencode-ai/util/encode"
+import { DataProvider } from "@opencode-ai/ui/context"
 import { SDKProvider } from "@/context/sdk"
-import { SyncProvider } from "@/context/sync"
+import { SyncProvider, useSync } from "@/context/sync"
+import { LocalProvider } from "@/context/local"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { decode64 } from "@/utils/base64"
+
+function DirectoryDataProviderV2(props: ParentProps<{ directory: string }>) {
+  const navigate = useNavigate()
+  const sync = useSync()
+  const slug = createMemo(() => base64Encode(props.directory))
+
+  return (
+    <DataProvider
+      data={sync.data}
+      directory={props.directory}
+      onNavigateToSession={(sessionID: string) => navigate(`/task/${slug()}/${sessionID}`)}
+      onSessionHref={(sessionID: string) => `/task/${slug()}/${sessionID}`}
+    >
+      <LocalProvider>{props.children}</LocalProvider>
+    </DataProvider>
+  )
+}
 
 export default function DirectoryLayoutV2(props: ParentProps) {
   const params = useParams()
@@ -39,7 +59,11 @@ export default function DirectoryLayoutV2(props: ParentProps) {
     <Show when={state.resolved}>
       {(resolved) => (
         <SDKProvider directory={resolved}>
-          <SyncProvider>{props.children}</SyncProvider>
+          <SyncProvider>
+            <DirectoryDataProviderV2 directory={resolved()}>
+              {props.children}
+            </DirectoryDataProviderV2>
+          </SyncProvider>
         </SDKProvider>
       )}
     </Show>

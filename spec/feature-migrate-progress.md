@@ -136,16 +136,16 @@
 
 ### 改动清单
 
-| 改动 | 文件 | 状态 |
-|------|------|------|
-| Side Panel v2（可折叠多 Section） | `session-side-panel_v2.tsx` | ✅ |
-| 产物列表 Section | `artifact-list.tsx` | ✅ |
-| 产物预览区 + 多格式预览器 | `artifact-preview.tsx` | ✅ |
-| Artifact Store | `context/artifact.ts` | ✅ |
-| 更新 session_v2 引用 | `session_v2.tsx` | ✅ |
-| v2 目录 Provider 包装 | `directory-layout_v2.tsx` | ✅ |
-| v2 session 路由包装 DirectoryLayoutV2 | `app.tsx` | ✅ |
-| i18n 国际化 key（en/zh） | `i18n/en.ts`, `i18n/zh.ts` | ✅ |
+| 改动                                | 文件                          | 状态  |
+| --------------------------------- | --------------------------- | --- |
+| Side Panel v2（可折叠多 Section）       | `session-side-panel_v2.tsx` | ✅   |
+| 产物列表 Section                      | `artifact-list.tsx`         | ✅   |
+| 产物预览区 + 多格式预览器                    | `artifact-preview.tsx`      | ✅   |
+| Artifact Store                    | `context/artifact.ts`       | ✅   |
+| 更新 session_v2 引用                  | `session_v2.tsx`            | ✅   |
+| v2 目录 Provider 包装                 | `directory-layout_v2.tsx`   | ✅   |
+| v2 session 路由包装 DirectoryLayoutV2 | `app.tsx`                   | ✅   |
+| i18n 国际化 key（en/zh）               | `i18n/en.ts`, `i18n/zh.ts`  | ✅   |
 
 ### 完成门禁
 

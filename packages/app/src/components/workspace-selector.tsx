@@ -86,6 +86,7 @@ export function WorkspaceSelector(props: WorkspaceSelectorProps) {
       <Kobalte.Trigger
         as="button"
         class="flex items-center gap-1.5 rounded-md px-2 py-1 text-12-regular text-color-text-dimmed hover:bg-color-bg-hover transition-colors"
+        data-testid="workspace-selector"
       >
         <Icon name="folder" size="small" />
         <span class="max-w-48 truncate">{displayName()}</span>

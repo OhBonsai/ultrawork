@@ -1,10 +1,10 @@
-import { Show, Switch, Match, createMemo, createResource, Suspense } from "solid-js"
+import { Show, Switch, Match, createMemo, createEffect, on } from "solid-js"
 import { Markdown } from "@opencode-ai/ui/markdown"
 import { Icon } from "@opencode-ai/ui/icon"
 import { IconButton } from "@opencode-ai/ui/icon-button"
 import { useLanguage } from "@/context/language"
 import { useArtifact, type Artifact } from "@/context/artifact"
-import { useSDK } from "@/context/sdk"
+import { useFile } from "@/context/file"
 
 function CodePreview(props: { content: string; filePath: string }) {
   const ext = createMemo(() => {
@@ -55,52 +55,56 @@ function ImagePreview(props: { src: string }) {
 }
 
 function FileContent(props: { artifact: Artifact }) {
-  const sdk = useSDK()
+  const file = useFile()
   const language = useLanguage()
 
-  const [content] = createResource(
-    () => props.artifact.filePath,
-    async (filePath) => {
-      try {
-        const result = await sdk.client.file.read({ path: filePath })
-        return result.data?.content ?? ""
-      } catch {
-        return null
-      }
-    },
+  // Load file content via FileProvider (same as v1)
+  createEffect(
+    on(
+      () => props.artifact.filePath,
+      (filePath) => {
+        if (filePath) file.load(filePath)
+      },
+    ),
   )
 
+  const state = createMemo(() => file.get(props.artifact.filePath))
+  const content = createMemo(() => state()?.content?.content ?? "")
+
   return (
-    <Suspense
+    <Show
+      when={state()?.loaded}
       fallback={
-        <div class="flex h-full items-center justify-center">
-          <span class="text-12 text-color-text-dimmed">{language.t("common.loading")}</span>
-        </div>
+        <Show
+          when={state()?.error}
+          fallback={
+            <div class="flex h-full items-center justify-center">
+              <span class="text-12 text-color-text-dimmed">{language.t("common.loading")}</span>
+            </div>
+          }
+        >
+          {(err) => (
+            <div class="flex h-full items-center justify-center">
+              <span class="text-12 text-color-text-dimmed">{err()}</span>
+            </div>
+          )}
+        </Show>
       }
     >
-      <Show
-        when={content() !== null}
-        fallback={
-          <div class="flex h-full items-center justify-center">
-            <span class="text-12 text-color-text-dimmed">{language.t("v2.artifact.loadError")}</span>
-          </div>
-        }
+      <Switch
+        fallback={<CodePreview content={content()} filePath={props.artifact.filePath} />}
       >
-        <Switch
-          fallback={<CodePreview content={content() ?? ""} filePath={props.artifact.filePath} />}
-        >
-          <Match when={props.artifact.type === "markdown"}>
-            <MarkdownPreview content={content() ?? ""} />
-          </Match>
-          <Match when={props.artifact.type === "html"}>
-            <HtmlPreview content={content() ?? ""} />
-          </Match>
-          <Match when={props.artifact.type === "image"}>
-            <ImagePreview src={`file://${props.artifact.filePath}`} />
-          </Match>
-        </Switch>
-      </Show>
-    </Suspense>
+        <Match when={props.artifact.type === "markdown"}>
+          <MarkdownPreview content={content()} />
+        </Match>
+        <Match when={props.artifact.type === "html"}>
+          <HtmlPreview content={content()} />
+        </Match>
+        <Match when={props.artifact.type === "image"}>
+          <ImagePreview src={`file://${props.artifact.filePath}`} />
+        </Match>
+      </Switch>
+    </Show>
   )
 }
 
@@ -120,7 +124,7 @@ export function ArtifactPreview() {
   return (
     <Show when={selected()}>
       {(current) => (
-        <div class="flex h-full flex-col overflow-hidden border-l border-color-border-base bg-color-bg-base">
+        <div class="flex h-full flex-col overflow-hidden border-r border-color-border-base bg-color-bg-base">
           <div class="flex shrink-0 items-center justify-between border-b border-color-border-base px-3 py-2">
             <div class="flex min-w-0 items-center gap-2">
               <Icon name="eye" size="small" class="text-color-text-dimmed" />

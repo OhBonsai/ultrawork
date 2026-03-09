@@ -11,10 +11,13 @@ test("input box can be focused and typed into", async ({ page }) => {
 
 test("workspace selector can be opened", async ({ page }) => {
   await page.goto("/")
-  // Find the workspace selector button (has folder icon)
-  const workspaceButton = page.locator('[data-testid="home-composer"]').locator('button:has-text("Select workspace"), button:has-text("~")')
-  await expect(workspaceButton.first()).toBeVisible()
-  await workspaceButton.first().click()
+  // The workspace selector button shows the directory path with a folder icon
+  const composer = page.locator('[data-testid="home-composer"]')
+  await expect(composer).toBeVisible()
+  // Find the button that contains the folder icon (workspace selector)
+  const workspaceButton = composer.locator('[data-testid="workspace-selector"]')
+  await expect(workspaceButton).toBeVisible()
+  await workspaceButton.click()
   // Popover should appear with recent projects or browse option
   await expect(page.getByText("Open project").last()).toBeVisible()
 })

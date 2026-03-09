@@ -565,6 +565,7 @@ export const dict = {
   "common.archive": "归档",
   "common.delete": "删除",
   "common.close": "关闭",
+  "common.openFolder": "在文件夹中打开",
   "common.edit": "编辑",
   "common.loadMore": "加载更多",
   "common.key.esc": "ESC",
@@ -880,4 +881,10 @@ export const dict = {
   "v2.artifact.process": "过程产物",
   "v2.artifact.closePreview": "关闭预览",
   "v2.artifact.loadError": "加载文件失败",
+  "v2.context.title": "上下文",
+  "v2.context.connectors": "连接器",
+  "v2.context.skills": "技能",
+  "v2.context.mcpCommands": "MCP 命令",
+  "v2.context.noConnectors": "暂无连接器",
+  "v2.context.noSkills": "暂无技能",
 } satisfies Partial<Record<Keys, string>>

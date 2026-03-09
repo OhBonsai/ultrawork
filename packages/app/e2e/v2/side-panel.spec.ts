@@ -89,4 +89,67 @@ test.describe("V2 Side Panel", () => {
       await expect(panel).not.toBeVisible()
     })
   })
+
+  test("side panel has Artifacts, Files, and Context tabs", async ({ page, directory }) => {
+    const sdk = createSdk(directory)
+
+    await withSession(sdk, "side-panel-tabs", async (session) => {
+      await page.goto(v2SessionPath(directory, session.id))
+      await expect(page.locator('[data-component="v2-session"]')).toBeVisible()
+
+      const panel = page.locator('[data-component="v2-side-panel"]')
+      await expect(panel).toBeVisible()
+
+      // All three tabs should be visible
+      await expect(panel.locator('[data-slot="tabs-trigger"][data-value="artifacts"]')).toBeVisible()
+      await expect(panel.locator('[data-slot="tabs-trigger"][data-value="files"]')).toBeVisible()
+      await expect(panel.locator('[data-slot="tabs-trigger"][data-value="context"]')).toBeVisible()
+    })
+  })
+
+  test("Context tab shows Connectors and Skills sections", async ({ page, directory }) => {
+    const sdk = createSdk(directory)
+
+    await withSession(sdk, "side-panel-context", async (session) => {
+      await page.goto(v2SessionPath(directory, session.id))
+      await expect(page.locator('[data-component="v2-session"]')).toBeVisible()
+
+      const panel = page.locator('[data-component="v2-side-panel"]')
+      await expect(panel).toBeVisible()
+
+      // Switch to Context tab
+      await panel.locator('[data-slot="tabs-trigger"][data-value="context"]').click()
+
+      // Connectors and Skills section headers should be visible
+      await expect(panel.getByText("Connectors", { exact: true })).toBeVisible()
+      await expect(panel.getByText("Skills", { exact: true })).toBeVisible()
+    })
+  })
+
+  test("switching between all three tabs works", async ({ page, directory }) => {
+    const sdk = createSdk(directory)
+
+    await withSession(sdk, "side-panel-tab-switch", async (session) => {
+      await page.goto(v2SessionPath(directory, session.id))
+      await expect(page.locator('[data-component="v2-session"]')).toBeVisible()
+
+      const panel = page.locator('[data-component="v2-side-panel"]')
+      await expect(panel).toBeVisible()
+
+      // Start on Artifacts tab
+      await expect(panel.getByText(/no artifacts/i)).toBeVisible()
+
+      // Switch to Files tab
+      await panel.locator('[data-slot="tabs-trigger"][data-value="files"]').click()
+      await expect(panel.getByText(/no artifacts/i)).not.toBeVisible()
+
+      // Switch to Context tab
+      await panel.locator('[data-slot="tabs-trigger"][data-value="context"]').click()
+      await expect(panel.getByText("Connectors", { exact: true })).toBeVisible()
+
+      // Switch back to Artifacts tab
+      await panel.locator('[data-slot="tabs-trigger"][data-value="artifacts"]').click()
+      await expect(panel.getByText(/no artifacts/i)).toBeVisible()
+    })
+  })
 })

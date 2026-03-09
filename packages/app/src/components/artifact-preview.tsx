@@ -5,6 +5,8 @@ import { IconButton } from "@opencode-ai/ui/icon-button"
 import { useLanguage } from "@/context/language"
 import { useArtifact, type Artifact } from "@/context/artifact"
 import { useFile } from "@/context/file"
+import { usePlatform } from "@/context/platform"
+import { useServer } from "@/context/server"
 
 function CodePreview(props: { content: string; filePath: string }) {
   const ext = createMemo(() => {
@@ -111,6 +113,8 @@ function FileContent(props: { artifact: Artifact }) {
 export function ArtifactPreview() {
   const language = useLanguage()
   const artifact = useArtifact()
+  const platform = usePlatform()
+  const server = useServer()
 
   const selected = createMemo(() => artifact.selected)
 
@@ -120,6 +124,15 @@ export function ArtifactPreview() {
     const parts = a.filePath.split("/")
     return parts[parts.length - 1] || a.filePath
   })
+
+  const canOpenFolder = createMemo(() => platform.platform === "desktop" && !!platform.openPath && server.isLocal())
+
+  const openFolder = () => {
+    const a = selected()
+    if (!a || !platform.openPath) return
+    const dir = a.filePath.split("/").slice(0, -1).join("/")
+    if (dir) platform.openPath(dir)
+  }
 
   return (
     <Show when={selected()}>
@@ -132,13 +145,24 @@ export function ArtifactPreview() {
                 {filename()}
               </span>
             </div>
-            <IconButton
-              icon="close-small"
-              variant="ghost"
-              class="h-6 w-6"
-              onClick={() => artifact.select(null)}
-              aria-label={language.t("v2.artifact.closePreview")}
-            />
+            <div class="flex shrink-0 items-center gap-0.5">
+              <Show when={canOpenFolder()}>
+                <IconButton
+                  icon="open-file"
+                  variant="ghost"
+                  class="h-6 w-6"
+                  onClick={openFolder}
+                  aria-label={language.t("common.openFolder")}
+                />
+              </Show>
+              <IconButton
+                icon="close-small"
+                variant="ghost"
+                class="h-6 w-6"
+                onClick={() => artifact.select(null)}
+                aria-label={language.t("v2.artifact.closePreview")}
+              />
+            </div>
           </div>
           <div class="min-h-0 flex-1">
             <FileContent artifact={current()} />

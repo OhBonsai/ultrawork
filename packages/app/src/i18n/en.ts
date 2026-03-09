@@ -617,6 +617,7 @@ export const dict = {
   "common.archive": "Archive",
   "common.delete": "Delete",
   "common.close": "Close",
+  "common.openFolder": "Open in folder",
   "common.edit": "Edit",
   "common.loadMore": "Load more",
   "common.key.esc": "ESC",
@@ -930,4 +931,10 @@ export const dict = {
   "v2.artifact.process": "Process",
   "v2.artifact.closePreview": "Close preview",
   "v2.artifact.loadError": "Failed to load file",
+  "v2.context.title": "Context",
+  "v2.context.connectors": "Connectors",
+  "v2.context.skills": "Skills",
+  "v2.context.mcpCommands": "MCP Commands",
+  "v2.context.noConnectors": "No connectors configured",
+  "v2.context.noSkills": "No skills available",
 }

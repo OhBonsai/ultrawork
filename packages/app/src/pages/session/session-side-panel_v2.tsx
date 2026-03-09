@@ -2,6 +2,7 @@ import { Show, Switch, Match, createMemo, createEffect, createSignal, on } from 
 import { createMediaQuery } from "@solid-primitives/media"
 import { useParams } from "@solidjs/router"
 import { Tabs } from "@opencode-ai/ui/tabs"
+import { ResizeHandle } from "@opencode-ai/ui/resize-handle"
 import { useLanguage } from "@/context/language"
 import { useSync } from "@/context/sync"
 import { useFile } from "@/context/file"
@@ -10,7 +11,12 @@ import { ArtifactList } from "@/components/artifact-list"
 import { ArtifactPreview } from "@/components/artifact-preview"
 import FileTree from "@/components/file-tree"
 
-const PANEL_WIDTH = 320
+const DEFAULT_LIST_WIDTH = 320
+const DEFAULT_PREVIEW_WIDTH = 420
+const MIN_LIST_WIDTH = 200
+const MAX_LIST_WIDTH = 600
+const MIN_PREVIEW_WIDTH = 280
+const MAX_PREVIEW_WIDTH = 900
 
 type PanelTab = "artifacts" | "files"
 
@@ -39,7 +45,7 @@ function FilePreview(props: { filePath: string; onClose: () => void }) {
   })
 
   return (
-    <div class="flex h-full flex-col overflow-hidden border-r border-border-weaker-base bg-background-base">
+    <div class="flex h-full flex-col overflow-hidden bg-background-base">
       <div class="flex shrink-0 items-center justify-between border-b border-border-weaker-base px-3 py-2">
         <span class="min-w-0 truncate text-12-medium text-text-primary">{filename()}</span>
         <button
@@ -85,6 +91,8 @@ export function SessionSidePanel() {
 
   const [activeTab, setActiveTab] = createSignal<PanelTab>("artifacts")
   const [selectedFile, setSelectedFile] = createSignal<string | null>(null)
+  const [listWidth, setListWidth] = createSignal(DEFAULT_LIST_WIDTH)
+  const [previewWidth, setPreviewWidth] = createSignal(DEFAULT_PREVIEW_WIDTH)
 
   const messages = createMemo(() => {
     if (!params.id) return []
@@ -158,7 +166,13 @@ export function SessionSidePanel() {
   const hasArtifactPreview = createMemo(() => activeTab() === "artifacts" && !!artifact.selected)
   const hasFilePreview = createMemo(() => activeTab() === "files" && !!selectedFile())
   const hasPreview = createMemo(() => hasArtifactPreview() || hasFilePreview())
-  const panelWidth = createMemo(() => (open() ? `${PANEL_WIDTH}px` : "0px"))
+
+  const totalWidth = createMemo(() => {
+    if (!open()) return 0
+    const list = listWidth()
+    const preview = hasPreview() ? previewWidth() : 0
+    return list + preview
+  })
 
   return (
     <Show when={isDesktop()}>
@@ -173,16 +187,16 @@ export function SessionSidePanel() {
           "transition-[width,opacity] duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[width] motion-reduce:transition-none":
             true,
         }}
-        style={{ width: hasPreview() ? `${PANEL_WIDTH * 2}px` : panelWidth() }}
+        style={{ width: `${totalWidth()}px` }}
         data-component="v2-side-panel"
       >
         <div
           class="flex h-full border-l border-border-weaker-base"
-          style={{ width: hasPreview() ? `${PANEL_WIDTH * 2}px` : `${PANEL_WIDTH}px` }}
+          style={{ width: `${totalWidth()}px` }}
         >
           {/* Preview section - left side, between chat and list */}
           <Show when={hasPreview()}>
-            <div class="h-full shrink-0 overflow-hidden" style={{ width: `${PANEL_WIDTH}px` }}>
+            <div class="relative h-full shrink-0 overflow-hidden" style={{ width: `${previewWidth()}px` }}>
               <Switch>
                 <Match when={hasArtifactPreview()}>
                   <ArtifactPreview />
@@ -196,11 +210,32 @@ export function SessionSidePanel() {
                   )}
                 </Match>
               </Switch>
+              {/* Resize handle on left edge of preview (drag to resize preview) */}
+              <ResizeHandle
+                direction="horizontal"
+                edge="start"
+                size={previewWidth()}
+                min={MIN_PREVIEW_WIDTH}
+                max={MAX_PREVIEW_WIDTH}
+                onResize={setPreviewWidth}
+              />
             </div>
           </Show>
 
           {/* Main panel section - right side */}
-          <div class="flex h-full shrink-0 flex-col overflow-hidden border-l border-border-weaker-base" style={{ width: `${PANEL_WIDTH}px` }}>
+          <div class="relative flex h-full shrink-0 flex-col overflow-hidden border-l border-border-weaker-base" style={{ width: `${listWidth()}px` }}>
+            {/* Resize handle on left edge of list panel */}
+            <Show when={!hasPreview()}>
+              <ResizeHandle
+                direction="horizontal"
+                edge="start"
+                size={listWidth()}
+                min={MIN_LIST_WIDTH}
+                max={MAX_LIST_WIDTH}
+                onResize={setListWidth}
+              />
+            </Show>
+
             {/* Tab headers */}
             <Tabs
               variant="pill"

@@ -1,10 +1,14 @@
 import { Icon } from "@opencode-ai/ui/icon"
 import { IconButton } from "@opencode-ai/ui/icon-button"
 import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { showToast } from "@opencode-ai/ui/toast"
 import { useNavigate } from "@solidjs/router"
-import { createMemo, type Accessor, type JSX, Show } from "solid-js"
+import { base64Encode } from "@opencode-ai/util/encode"
+import { createMemo, createSignal, type Accessor, type JSX, Show } from "solid-js"
 import { useLanguage } from "@/context/language"
 import { useLayout } from "@/context/layout"
+import { useGlobalSDK } from "@/context/global-sdk"
+import { useGlobalSync } from "@/context/global-sync"
 import { Persist, persisted } from "@/utils/persist"
 import { createStore } from "solid-js/store"
 import { SidebarUserProfile } from "./sidebar-user-profile"
@@ -94,11 +98,43 @@ function NewTaskButton(props: {
   language: ReturnType<typeof useLanguage>
 }) {
   const navigate = useNavigate()
+  const globalSDK = useGlobalSDK()
+  const sync = useGlobalSync()
   const label = () => props.language.t("command.session.new")
+  const [creating, setCreating] = createSignal(false)
 
-  const handleClick = () => {
-    // Always navigate to home, even if already there
-    navigate("/", { replace: false })
+  const handleClick = async () => {
+    const dir = props.directory()
+    if (!dir || creating()) {
+      navigate("/", { replace: false })
+      return
+    }
+
+    setCreating(true)
+    try {
+      const client = globalSDK.createClient({
+        directory: dir,
+        throwOnError: true,
+      })
+      sync.child(dir)
+
+      const session = await client.session.create()
+      const sessionData = session.data
+      if (!sessionData) {
+        showToast({
+          variant: "error",
+          title: props.language.t("prompt.toast.sessionCreateFailed.title"),
+        })
+        return
+      }
+
+      const dirSlug = base64Encode(dir)
+      navigate(`/task/${dirSlug}/${sessionData.id}`)
+    } catch {
+      navigate("/", { replace: false })
+    } finally {
+      setCreating(false)
+    }
   }
 
   return (
@@ -110,6 +146,7 @@ function NewTaskButton(props: {
             type="button"
             class="flex w-full cursor-pointer items-center justify-center rounded-md p-2 text-text-strong hover:bg-surface-raised-base-hover focus:outline-none"
             aria-label={label()}
+            disabled={creating()}
             onClick={handleClick}
           >
             <Icon name="plus" size="small" />
@@ -120,6 +157,7 @@ function NewTaskButton(props: {
       <button
         type="button"
         class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-text-strong hover:bg-surface-raised-base-hover focus:outline-none"
+        disabled={creating()}
         onClick={handleClick}
       >
         <Icon name="plus" size="small" />

@@ -9,19 +9,24 @@ import {
   onCleanup,
   untrack,
 } from "solid-js"
+import { Portal } from "solid-js/web"
 import { createStore } from "solid-js/store"
 import { createMediaQuery } from "@solid-primitives/media"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { createAutoScroll } from "@opencode-ai/ui/hooks"
+import { Button } from "@opencode-ai/ui/button"
+import { Icon } from "@opencode-ai/ui/icon"
+import { TooltipKeybind } from "@opencode-ai/ui/tooltip"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { useParams } from "@solidjs/router"
 import { useLocal } from "@/context/local"
 import { useComments } from "@/context/comments"
 import { useLanguage } from "@/context/language"
+import { useCommand } from "@/context/command"
 import { usePrompt } from "@/context/prompt"
 import { useSDK } from "@/context/sdk"
 import { useSync } from "@/context/sync"
-import { ArtifactProvider } from "@/context/artifact"
+import { ArtifactProvider, useArtifact } from "@/context/artifact"
 import { createSessionComposerState, SessionComposerRegion } from "@/pages/session/composer"
 import { MessageTimeline } from "@/pages/session/message-timeline"
 import { resetSessionModel, syncSessionModel } from "@/pages/session/session-model-helpers"
@@ -216,6 +221,55 @@ function createSessionHistoryWindow(input: {
     loadAndReveal,
     onScrollerScroll,
   }
+}
+
+function PanelToggleButton() {
+  const artifact = useArtifact()
+  const language = useLanguage()
+  const command = useCommand()
+
+  command.register(() => [
+    {
+      id: "panel.toggle",
+      title: language.t("command.review.toggle"),
+      category: language.t("command.category.view"),
+      keybind: "mod+shift+r",
+      onSelect: () => artifact.togglePanel(),
+    },
+  ])
+
+  return (
+    <TooltipKeybind
+      title={language.t("command.review.toggle")}
+      keybind={command.keybind("panel.toggle")}
+    >
+      <Button
+        variant="ghost"
+        class="group/panel-toggle w-8 h-6 p-0 box-border"
+        onClick={() => artifact.togglePanel()}
+        aria-label={language.t("command.review.toggle")}
+        aria-expanded={artifact.panelOpen}
+      >
+        <div class="relative flex items-center justify-center size-4 [&>*]:absolute [&>*]:inset-0">
+          <Icon
+            size="small"
+            name={artifact.panelOpen ? "layout-right-partial" : "layout-right"}
+            class="group-hover/panel-toggle:hidden"
+          />
+          <Icon
+            size="small"
+            name="layout-right-partial"
+            class="hidden group-hover/panel-toggle:inline-block"
+          />
+          <Icon
+            size="small"
+            name={artifact.panelOpen ? "layout-right" : "layout-right-partial"}
+            class="hidden group-active/panel-toggle:inline-block"
+          />
+        </div>
+      </Button>
+    </TooltipKeybind>
+  )
 }
 
 export default function SessionV2() {
@@ -536,8 +590,19 @@ export default function SessionV2() {
     if (scrollStateFrame !== undefined) cancelAnimationFrame(scrollStateFrame)
   })
 
+  const rightMount = createMemo(() => document.getElementById("v2-topbar-right"))
+
   return (
     <ArtifactProvider>
+      {/* Panel toggle button portaled into header */}
+      <Show when={rightMount()}>
+        {(mount) => (
+          <Portal mount={mount()}>
+            <PanelToggleButton />
+          </Portal>
+        )}
+      </Show>
+
       <div class="flex size-full min-h-0" data-component="v2-session">
         {/* Chat area */}
         <div class="@container relative flex min-w-0 flex-1 flex-col min-h-0 bg-background-stronger">

@@ -19,6 +19,7 @@ export const DialogWorkspace: Component = () => {
   const dialog = useDialog()
 
   const projects = createMemo(() => layout.projects.list())
+  const currentDir = createMemo(() => projects()[0]?.worktree ?? "")
 
   function addDirectory(directory: string) {
     layout.projects.open(directory)
@@ -51,6 +52,12 @@ export const DialogWorkspace: Component = () => {
 
   const handleEdit = (project: ReturnType<typeof layout.projects.list>[number]) => {
     dialog.show(() => <DialogEditProject project={project} />)
+  }
+
+  const handleSelect = (directory: string) => {
+    server.projects.move(directory, 0)
+    server.projects.touch(directory)
+    dialog.close()
   }
 
   const handleRemove = (directory: string) => {
@@ -105,6 +112,8 @@ export const DialogWorkspace: Component = () => {
                       <WorkspaceItem
                         name={project.name || getFilename(project.worktree)}
                         path={project.worktree}
+                        active={currentDir() === project.worktree}
+                        onSelect={() => handleSelect(project.worktree)}
                         onEdit={() => handleEdit(project)}
                         onRemove={() => handleRemove(project.worktree)}
                       />
@@ -134,14 +143,22 @@ export const DialogWorkspace: Component = () => {
 interface WorkspaceItemProps {
   name: string
   path: string
+  active: boolean
+  onSelect: () => void
   onEdit: () => void
   onRemove: () => void
 }
 
 const WorkspaceItem: Component<WorkspaceItemProps> = (props) => {
   return (
-    <div
-      class="flex items-center gap-3 rounded-lg border border-border-weak-base bg-surface-raised-base px-4 py-3"
+    <button
+      type="button"
+      class="flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors cursor-pointer hover:bg-surface-base-hover"
+      classList={{
+        "border-[var(--button-primary-base)] bg-surface-raised-base": props.active,
+        "border-border-weak-base bg-surface-raised-base": !props.active,
+      }}
+      onClick={props.onSelect}
       data-component="workspace-item"
       data-path={props.path}
     >
@@ -153,21 +170,26 @@ const WorkspaceItem: Component<WorkspaceItemProps> = (props) => {
         <span class="text-12-regular text-text-weak truncate">{props.path}</span>
       </div>
       <div class="flex items-center gap-1 shrink-0">
-        <button
-          class="flex items-center justify-center size-7 rounded-md text-icon-base transition-colors hover:bg-surface-base-hover hover:text-text-strong"
-          onClick={props.onEdit}
+        <Show when={props.active}>
+          <div class="flex items-center justify-center size-7 text-[var(--button-primary-base)]">
+            <Icon name="check" size="small" />
+          </div>
+        </Show>
+        <div
+          class="flex items-center justify-center size-7 rounded-md text-icon-base transition-colors hover:bg-surface-raised-base-hover hover:text-text-strong"
+          onClick={(e) => { e.stopPropagation(); props.onEdit() }}
           data-action="workspace-edit"
         >
           <Icon name="pencil-line" size="small" />
-        </button>
-        <button
-          class="flex items-center justify-center size-7 rounded-md text-icon-base transition-colors hover:bg-surface-base-hover hover:text-text-strong"
-          onClick={props.onRemove}
+        </div>
+        <div
+          class="flex items-center justify-center size-7 rounded-md text-icon-base transition-colors hover:bg-surface-raised-base-hover hover:text-text-strong"
+          onClick={(e) => { e.stopPropagation(); props.onRemove() }}
           data-action="workspace-remove"
         >
           <Icon name="trash" size="small" />
-        </button>
+        </div>
       </div>
-    </div>
+    </button>
   )
 }

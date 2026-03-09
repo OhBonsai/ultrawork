@@ -79,10 +79,10 @@ export function SidebarShell() {
         <NewTaskButton expanded={expanded} directory={directory} language={language} />
       </div>
 
-      {/* Task list */}
+      {/* Task list — keyed so it remounts when directory changes */}
       <div class="min-h-0 flex-1 overflow-y-auto no-scrollbar" data-component="v2-task-list">
-        <Show when={directory()}>
-          <TaskList directory={directory()} collapsed={createMemo(() => !expanded())} />
+        <Show when={directory()} keyed>
+          {(dir) => <TaskList directory={dir} collapsed={createMemo(() => !expanded())} />}
         </Show>
       </div>
 

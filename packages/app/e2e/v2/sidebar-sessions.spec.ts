@@ -132,7 +132,7 @@ test("archiving a session removes it from the list", async ({ page }) => {
   }
 })
 
-test("new task button navigates to home from task view", async ({ page }) => {
+test("new task button creates a new session inline", async ({ page }) => {
   const directory = await createTestProject()
   const sdk = createSdk(directory)
   await seedStorage(page, directory)
@@ -142,6 +142,7 @@ test("new task button navigates to home from task view", async ({ page }) => {
   if (!session?.id) throw new Error("Session create did not return an id")
 
   const slug = dirSlug(directory)
+  const createdSessionIds: string[] = []
 
   try {
     // Navigate to a task view first
@@ -154,10 +155,23 @@ test("new task button navigates to home from task view", async ({ page }) => {
     await expect(newButton).toBeVisible()
     await newButton.click()
 
-    // Should navigate back to home
-    await expect(page).toHaveURL("/")
-    await expect(page.locator('[data-component="v2-home"]')).toBeVisible()
+    // Should navigate to a new task session (not home)
+    await expect(page).toHaveURL(/\/task\/[^/]+\/[^/]+/, { timeout: 10_000 })
+
+    // Should NOT be the original session
+    const url = page.url()
+    expect(url).not.toContain(session.id)
+
+    // Extract the new session ID for cleanup
+    const newSessionId = url.split("/").pop()
+    if (newSessionId) createdSessionIds.push(newSessionId)
+
+    // The new session view should be visible
+    await expect(page.locator('[data-component="v2-session"]')).toBeVisible({ timeout: 15_000 })
   } finally {
+    for (const id of createdSessionIds) {
+      await cleanupSession({ sdk, sessionID: id }).catch(() => {})
+    }
     await cleanupSession({ sdk, sessionID: session.id })
     await cleanupTestProject(directory)
   }

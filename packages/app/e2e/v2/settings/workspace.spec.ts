@@ -1,4 +1,5 @@
 import { test, expect } from "../../fixtures"
+import { createTestProject, cleanupTestProject, seedProjects } from "../../actions"
 
 test.describe("Settings — Workspace Dialog", () => {
   test.beforeEach(async ({ page }) => {
@@ -79,5 +80,42 @@ test.describe("Settings — Workspace Dialog", () => {
 
     await page.keyboard.press("Escape")
     await expect(dialog).not.toBeVisible()
+  })
+
+  test("clicking a workspace item switches the active workspace", async ({ page, directory }) => {
+    // Create a second project directory
+    const secondDir = await createTestProject()
+
+    try {
+      // Seed both directories into storage
+      await seedProjects(page, { directory, extra: [secondDir] })
+      await page.goto("/")
+      await expect(page.locator('[data-component="v2-layout"]')).toBeVisible()
+
+      // Open workspace dialog
+      const dialog = await openWorkspace(page)
+
+      // Both workspace items should be visible
+      const firstItem = dialog.locator(`[data-component="workspace-item"][data-path="${directory}"]`)
+      const secondItem = dialog.locator(`[data-component="workspace-item"][data-path="${secondDir}"]`)
+      await expect(firstItem).toBeVisible()
+      await expect(secondItem).toBeVisible()
+
+      // Click the second workspace item to switch
+      await secondItem.click()
+
+      // Dialog should close after selection
+      await expect(dialog).not.toBeVisible({ timeout: 3000 })
+
+      // Re-open workspace dialog to verify the active workspace changed
+      const dialog2 = await openWorkspace(page)
+      const items = dialog2.locator('[data-component="workspace-item"]')
+
+      // The first item in the list should now be the second directory (moved to front)
+      const firstItemPath = await items.first().getAttribute("data-path")
+      expect(firstItemPath).toBe(secondDir)
+    } finally {
+      await cleanupTestProject(secondDir)
+    }
   })
 })

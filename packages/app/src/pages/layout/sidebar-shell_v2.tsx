@@ -54,6 +54,7 @@ export function SidebarShell() {
       {/* Top section: toggle + new task */}
       <div
         class="flex shrink-0 items-center border-b border-color-border-base"
+        data-tauri-drag-region
         classList={{
           "justify-between px-3 h-12": expanded(),
           "justify-center h-12": !expanded(),

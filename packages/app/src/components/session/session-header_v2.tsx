@@ -91,6 +91,7 @@ export function SessionHeader() {
     <div
       class="flex h-12 shrink-0 items-center border-b border-color-border-base px-4"
       data-component="v2-topbar"
+      data-tauri-drag-region
     >
       {/* Left: back/forward */}
       <div class="flex shrink-0 items-center gap-0">

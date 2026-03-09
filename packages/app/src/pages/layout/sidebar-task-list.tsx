@@ -40,6 +40,7 @@ export function TaskList(props: { collapsed: Accessor<boolean> }) {
 
   const sorted = createMemo(() => {
     const dirs = allDirectories()
+    const seen = new Set<string>()
     const all: SessionWithDir[] = []
 
     for (const dir of dirs) {
@@ -47,6 +48,8 @@ export function TaskList(props: { collapsed: Accessor<boolean> }) {
       const sessions = store.session ?? []
       const slug = base64Encode(dir)
       for (const s of sessions) {
+        if (seen.has(s.id)) continue
+        seen.add(s.id)
         all.push({ ...s, _directory: dir, _slug: slug })
       }
     }

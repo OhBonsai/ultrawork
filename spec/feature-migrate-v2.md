@@ -96,7 +96,7 @@ v2 路由外层包裹 `ErrorBoundary`：开发阶段出错时显示"开发中"�
 | V1 功能 | 标记 | OpenCode 现有 | 改造说明 |
 |---------|------|---------------|----------|
 | 新建任务 | `=` | New Session 按钮 (`sidebar-items.tsx`) | 文案 i18n key 调整 |
-| 最近 10 条任务列表 | `~` | Session 列表 (`sidebar-items.tsx`) | **单目录内的 session 列表**扁平展示（去掉 Project/Workspace 视觉层级），running 置顶。注：SDK `session.list()` 为 per-directory，V1 不做跨目录聚合 |
+| 最近 10 条任务列表 | `~` | Session 列表 (`sidebar-items.tsx`) | ✅ **全局任务列表**：聚合所有工作区 session，按活跃时间倒序，running 置顶，max 10，按 session ID 去重。切换工作区不影响列表 |
 | 置顶 running 任务 | `~` | Session 列表（无排序逻辑） | 需添加按 status 排序：running → completed |
 | 任务操作：收藏 | `+` | 无 | 新增 favorite 字段 + UI |
 | 任务操作：重命名 | `=` | InlineEditor (`inline-editor.tsx`) | 已有内联重命名，可直接复用 |
@@ -373,8 +373,12 @@ type ArtifactStore = {
 | Context tab | 右侧面板新增第三个 tab（Artifacts / Files / Context），展示 MCP connectors 和 Skills |
 | Composer 简化 | v2 隐藏 shell mode toggle、agent selector、permissions 按钮，仅保留 attach file、model selector、think mode、send/stop |
 | CI DMG 修复 | bypass Tauri 内置 bundle_dmg.sh，改用 hdiutil create 直接创建 DMG |
+| 窗口拖动修复 | header + sidebar 顶部增加 `data-tauri-drag-region` |
+| 全局任务列表 | TaskList 聚合所有工作区 session，按活跃时间倒序，running 置顶，max 10，按 session ID 去重 |
+| "新建任务" | "新建会话" → "新建任务"（en/zh），新建任务使用当前工作区创建 session |
 
 - [x] `e2e/v2/side-panel.spec.ts` — Context tab、三 tab 切换（3 新增用例，共 7 用例）
+- [x] `e2e/v2/sidebar-sessions.spec.ts` — 跨工作区任务列表、新建任务工作区确认（2 新增用例，共 7 用例）
 
 ---
 

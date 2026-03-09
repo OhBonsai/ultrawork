@@ -42,7 +42,7 @@ export const dict = {
   "command.language.cycle": "Cycle language",
   "command.language.set": "Use language: {{language}}",
 
-  "command.session.new": "New session",
+  "command.session.new": "New task",
   "command.file.open": "Open file",
   "command.tab.close": "Close tab",
   "command.context.addSelection": "Add selection to context",
@@ -937,4 +937,5 @@ export const dict = {
   "v2.context.mcpCommands": "MCP Commands",
   "v2.context.noConnectors": "No connectors configured",
   "v2.context.noSkills": "No skills available",
+  "v2.sidebar.tasks": "Tasks",
 }

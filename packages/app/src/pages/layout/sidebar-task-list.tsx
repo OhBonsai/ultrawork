@@ -18,63 +18,73 @@ import { sessionPermissionRequest } from "../session/composer/session-request-tr
 
 const MAX_TASKS = 10
 
+type SessionWithDir = Session & { _directory: string; _slug: string }
+
 /**
- * Flat session list for a single directory.
- * Running sessions are pinned to the top.
+ * Global task list: aggregates sessions from ALL workspaces,
+ * sorted by updated time (desc), max 10.
  */
-export function TaskList(props: {
-  directory: string
-  collapsed: Accessor<boolean>
-}) {
+export function TaskList(props: { collapsed: Accessor<boolean> }) {
   const globalSync = useGlobalSync()
   const globalSDK = useGlobalSDK()
+  const layout = useLayout()
   const language = useLanguage()
   const notification = useNotification()
   const permission = usePermission()
   const navigate = useNavigate()
   const params = useParams()
 
-  const [store, setStore] = globalSync.child(props.directory)
-  const slug = createMemo(() => base64Encode(props.directory))
+  const allDirectories = createMemo(() =>
+    layout.projects.list().map((p) => p.worktree),
+  )
 
   const sorted = createMemo(() => {
-    const sessions = store.session ?? []
-    const limited = sessions.slice(0, MAX_TASKS)
+    const dirs = allDirectories()
+    const all: SessionWithDir[] = []
 
-    return [...limited].sort((a, b) => {
-      const aStatus = store.session_status[a.id]
-      const bStatus = store.session_status[b.id]
+    for (const dir of dirs) {
+      const [store] = globalSync.child(dir, { bootstrap: false })
+      const sessions = store.session ?? []
+      const slug = base64Encode(dir)
+      for (const s of sessions) {
+        all.push({ ...s, _directory: dir, _slug: slug })
+      }
+    }
+
+    // Sort: running first, then by updated time desc
+    all.sort((a, b) => {
+      const aStore = globalSync.child(a._directory, { bootstrap: false })[0]
+      const bStore = globalSync.child(b._directory, { bootstrap: false })[0]
+      const aStatus = aStore.session_status[a.id]
+      const bStatus = bStore.session_status[b.id]
       const aRunning = aStatus?.type === "busy" || aStatus?.type === "retry"
       const bRunning = bStatus?.type === "busy" || bStatus?.type === "retry"
 
       if (aRunning && !bRunning) return -1
       if (!aRunning && bRunning) return 1
-      return 0
+      return (b.time?.updated ?? 0) - (a.time?.updated ?? 0)
     })
+
+    return all.slice(0, MAX_TASKS)
   })
 
-  async function archiveSession(session: Session) {
-    const sessions = store.session ?? []
-    const index = sessions.findIndex((s) => s.id === session.id)
-    const nextSession = sessions[index + 1] ?? sessions[index - 1]
-
+  async function archiveSession(session: SessionWithDir) {
     await globalSDK.client.session.update({
-      directory: session.directory,
+      directory: session._directory,
       sessionID: session.id,
       time: { archived: Date.now() },
     })
+
+    const [, setStore] = globalSync.child(session._directory)
     setStore(
       produce((draft) => {
         const match = Binary.search(draft.session, session.id, (s) => s.id)
         if (match.found) draft.session.splice(match.index, 1)
       }),
     )
+
     if (session.id === params.id) {
-      if (nextSession) {
-        navigate(`/task/${slug()}/${nextSession.id}`)
-      } else {
-        navigate("/")
-      }
+      navigate("/")
     }
   }
 
@@ -83,7 +93,7 @@ export function TaskList(props: {
       <Show when={!props.collapsed()}>
         <div class="px-2 py-1">
           <span class="text-11 font-medium uppercase tracking-wider text-text-dimmed">
-            {language.t("command.category.session")}
+            {language.t("v2.sidebar.tasks")}
           </span>
         </div>
       </Show>
@@ -92,9 +102,8 @@ export function TaskList(props: {
         {(session) => (
           <TaskItem
             session={session}
-            slug={slug()}
             collapsed={props.collapsed}
-            store={store}
+            globalSync={globalSync}
             notification={notification}
             permission={permission}
             language={language}
@@ -105,12 +114,7 @@ export function TaskList(props: {
 
       <Show when={sorted().length === 0 && !props.collapsed()}>
         <div class="px-2 py-3 text-center">
-          <Show
-            when={store.status !== "loading"}
-            fallback={<span class="text-12 text-text-dimmed">{language.t("session.messages.loading")}</span>}
-          >
-            <span class="text-12 text-text-dimmed-extra">—</span>
-          </Show>
+          <span class="text-12 text-text-dimmed-extra">—</span>
         </div>
       </Show>
     </div>
@@ -118,31 +122,35 @@ export function TaskList(props: {
 }
 
 function TaskItem(props: {
-  session: Session
-  slug: string
+  session: SessionWithDir
   collapsed: Accessor<boolean>
-  store: ReturnType<ReturnType<typeof useGlobalSync>["child"]>[0]
+  globalSync: ReturnType<typeof useGlobalSync>
   notification: ReturnType<typeof useNotification>
   permission: ReturnType<typeof usePermission>
   language: ReturnType<typeof useLanguage>
-  archiveSession: (session: Session) => Promise<void>
+  archiveSession: (session: SessionWithDir) => Promise<void>
 }) {
   const params = useParams()
 
   const isActive = createMemo(() => props.session.id === params.id)
 
+  const store = createMemo(
+    () => props.globalSync.child(props.session._directory, { bootstrap: false })[0],
+  )
+
   const hasPermissions = createMemo(() => {
+    const s = store()
     return !!sessionPermissionRequest(
-      props.store.session,
-      props.store.permission,
+      s.session,
+      s.permission,
       props.session.id,
-      (item) => !props.permission.autoResponds(item, props.session.directory),
+      (item) => !props.permission.autoResponds(item, props.session._directory),
     )
   })
 
   const isWorking = createMemo(() => {
     if (hasPermissions()) return false
-    const status = props.store.session_status[props.session.id]
+    const status = store().session_status[props.session.id]
     return status?.type === "busy" || status?.type === "retry"
   })
 
@@ -157,7 +165,7 @@ function TaskItem(props: {
     return "none" as const
   })
 
-  const href = createMemo(() => `/task/${props.slug}/${props.session.id}`)
+  const href = createMemo(() => `/task/${props.session._slug}/${props.session.id}`)
 
   return (
     <div

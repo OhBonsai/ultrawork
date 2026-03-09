@@ -51,7 +51,7 @@ export const dict = {
   "command.language.cycle": "切换语言",
   "command.language.set": "使用语言：{{language}}",
 
-  "command.session.new": "新建会话",
+  "command.session.new": "新建任务",
 
   "command.file.open": "打开文件",
 
@@ -887,4 +887,5 @@ export const dict = {
   "v2.context.mcpCommands": "MCP 命令",
   "v2.context.noConnectors": "暂无连接器",
   "v2.context.noSkills": "暂无技能",
+  "v2.sidebar.tasks": "任务",
 } satisfies Partial<Record<Keys, string>>

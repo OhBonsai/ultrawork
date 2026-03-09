@@ -149,10 +149,11 @@ test("new task button creates a new session inline", async ({ page }) => {
     await page.goto(`/task/${slug}/${session.id}`)
     await expect(page.locator('[data-component="v2-session"]')).toBeVisible({ timeout: 15_000 })
 
-    // Click "New session" button in sidebar
+    // Click "New task" button in sidebar
     const sidebar = page.locator('[data-component="v2-sidebar"]')
     const newButton = sidebar.getByRole("button").filter({ hasText: /new task/i })
     await expect(newButton).toBeVisible()
+    await expect(newButton).toBeEnabled({ timeout: 10_000 })
     await newButton.click()
 
     // Should navigate to a new task session (not home)
@@ -202,14 +203,15 @@ test("new task creates session in the current (first) workspace", async ({ page 
     await page.goto("/")
     await expect(page.locator('[data-component="v2-sidebar"]')).toBeVisible()
 
-    // Click "New task" button
+    // Click "New task" button — wait for it to be enabled (directory loaded)
     const sidebar = page.locator('[data-component="v2-sidebar"]')
     const newButton = sidebar.getByRole("button").filter({ hasText: /new task/i })
     await expect(newButton).toBeVisible({ timeout: 10_000 })
+    await expect(newButton).toBeEnabled({ timeout: 10_000 })
     await newButton.click()
 
     // Should navigate to a task URL with the first workspace's slug
-    await expect(page).toHaveURL(new RegExp(`/task/${slug1}/`), { timeout: 10_000 })
+    await expect(page).toHaveURL(new RegExp(`/task/${slug1}/`), { timeout: 15_000 })
 
     const url = page.url()
     const newSessionId = url.split("/").pop()

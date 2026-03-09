@@ -109,6 +109,8 @@ function NewTaskButton(props: {
   const label = () => props.language.t("command.session.new")
   const [creating, setCreating] = createSignal(false)
 
+  const ready = createMemo(() => !!props.directory())
+
   const handleClick = async () => {
     const dir = props.directory()
     if (!dir || creating()) {
@@ -152,7 +154,7 @@ function NewTaskButton(props: {
             type="button"
             class="flex w-full cursor-pointer items-center justify-center rounded-md p-2 text-text-strong hover:bg-surface-raised-base-hover focus:outline-none"
             aria-label={label()}
-            disabled={creating()}
+            disabled={creating() || !ready()}
             onClick={handleClick}
           >
             <Icon name="plus" size="small" />
@@ -163,7 +165,7 @@ function NewTaskButton(props: {
       <button
         type="button"
         class="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-text-strong hover:bg-surface-raised-base-hover focus:outline-none"
-        disabled={creating()}
+        disabled={creating() || !ready()}
         onClick={handleClick}
       >
         <Icon name="plus" size="small" />

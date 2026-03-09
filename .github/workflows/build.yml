@@ -112,9 +112,42 @@ jobs:
             --config ./src-tauri/tauri.prod.conf.json
             ${{ matrix.settings.platform == 'linux' && '--bundles deb' || '' }}
             ${{ matrix.settings.platform == 'windows' && '--bundles msi' || '' }}
-            ${{ startsWith(matrix.settings.platform, 'macos') && '--bundles app,dmg' || '' }}
+            ${{ startsWith(matrix.settings.platform, 'macos') && '--bundles app' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create DMG from app bundle
+        if: steps.check.outputs.skip != 'true' && startsWith(matrix.settings.platform, 'macos')
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_DIR=$(find packages/desktop/src-tauri/target/${{ matrix.settings.target }}/release/bundle -name "*.app" -type d | head -1)
+          if [ -z "$APP_DIR" ]; then
+            echo "ERROR: No .app bundle found"
+            exit 1
+          fi
+          APP_NAME=$(basename "$APP_DIR" .app)
+          VERSION=$(grep '"version"' packages/desktop/package.json | head -1 | sed 's/.*: *"\(.*\)".*/\1/')
+          ARCH="${{ matrix.settings.target == 'aarch64-apple-darwin' && 'aarch64' || 'x86_64' }}"
+          DMG_NAME="${APP_NAME}_${VERSION}_${ARCH}.dmg"
+          DMG_DIR=$(dirname "$APP_DIR")
+
+          echo "Creating DMG: $DMG_NAME from $APP_DIR"
+
+          # Create DMG using hdiutil
+          TMP_DMG="$DMG_DIR/tmp.dmg"
+          hdiutil create -volname "$APP_NAME" -srcfolder "$APP_DIR" -ov -format UDBZ "$TMP_DMG"
+          mv "$TMP_DMG" "$DMG_DIR/$DMG_NAME"
+
+          echo "DMG created: $DMG_DIR/$DMG_NAME"
+          ls -la "$DMG_DIR/$DMG_NAME"
+
+      - name: Upload DMG artifact
+        if: steps.check.outputs.skip != 'true' && startsWith(matrix.settings.platform, 'macos')
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg-${{ matrix.settings.platform }}
+          path: packages/desktop/src-tauri/target/${{ matrix.settings.target }}/release/bundle/**/*.dmg
 
   release:
     needs: build

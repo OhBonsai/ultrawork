@@ -32,7 +32,7 @@ test("new task button is visible and clickable", async ({ page }) => {
   await page.goto("/")
   const sidebar = page.locator('[data-component="v2-sidebar"]')
   // New session button should be present
-  const newButton = sidebar.getByRole("button").filter({ hasText: /new session/i })
+  const newButton = sidebar.getByRole("button").filter({ hasText: /new task/i })
   await expect(newButton).toBeVisible()
   // Should be clickable even when already on home
   await newButton.click()

@@ -697,7 +697,7 @@ export async function setWorkspacesEnabled(page: Page, projectSlug: string, enab
 
   if (!flipped) await flip()
 
-  const expected = enabled ? "New workspace" : "New session"
+  const expected = enabled ? "New workspace" : "New task"
   await expect(page.getByRole("button", { name: expected }).first()).toBeVisible()
 }
 

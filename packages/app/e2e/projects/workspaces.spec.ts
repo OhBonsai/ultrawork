@@ -56,7 +56,7 @@ test("can enable and disable workspaces from project menu", async ({ page, withP
   await withProject(async ({ slug }) => {
     await openSidebar(page)
 
-    await expect(page.getByRole("button", { name: "New session" }).first()).toBeVisible()
+    await expect(page.getByRole("button", { name: "New task" }).first()).toBeVisible()
     await expect(page.getByRole("button", { name: "New workspace" })).toHaveCount(0)
 
     await setWorkspacesEnabled(page, slug, true)
@@ -64,7 +64,7 @@ test("can enable and disable workspaces from project menu", async ({ page, withP
     await expect(page.locator(workspaceItemSelector(slug)).first()).toBeVisible()
 
     await setWorkspacesEnabled(page, slug, false)
-    await expect(page.getByRole("button", { name: "New session" }).first()).toBeVisible()
+    await expect(page.getByRole("button", { name: "New task" }).first()).toBeVisible()
     await expect(page.locator(workspaceItemSelector(slug))).toHaveCount(0)
   })
 })

@@ -362,6 +362,20 @@ type ArtifactStore = {
 - [x] `e2e/v2/task-execution.spec.ts` — v2 路由导航、session 渲染、Home↔Session 切换（5 用例）
 - [x] typecheck 无报错
 
+#### Phase 1C 后续增强（已完成）
+
+| 改动 | 说明 |
+|------|------|
+| Header 布局优化 | 标题居中 + 右侧 panel toggle（Portal mount timing 修复） |
+| Preview「打开文件夹」按钮 | 关闭按钮左侧，调用 `platform.openPath()` 打开原生文件管理器 |
+| Preview 隐藏列表面板 | 打开 preview 时右侧列表自动隐藏，关闭 preview 恢复 |
+| Preview 初始宽度 | 动态计算 = session view 容器宽度 / 2 |
+| Context tab | 右侧面板新增第三个 tab（Artifacts / Files / Context），展示 MCP connectors 和 Skills |
+| Composer 简化 | v2 隐藏 shell mode toggle、agent selector、permissions 按钮，仅保留 attach file、model selector、think mode、send/stop |
+| CI DMG 修复 | bypass Tauri 内置 bundle_dmg.sh，改用 hdiutil create 直接创建 DMG |
+
+- [x] `e2e/v2/side-panel.spec.ts` — Context tab、三 tab 切换（3 新增用例，共 7 用例）
+
 ---
 
 ### Phase 1D：用户 Profile + Settings 壳
@@ -415,7 +429,7 @@ type ArtifactStore = {
 - [x] `e2e/v2/settings/general.spec.ts` — Tab 切换 + 外观设置（8 用例）
 - [x] `e2e/v2/settings/providers.spec.ts` — 模型供应商弹窗可打开；Providers/Models Tab 切换正常（6 用例）
 - [x] `e2e/v2/settings/workspace.spec.ts` — 工作目录管理弹窗可打开；Directories/Environment Tab 切换正常（7 用例）
-- [ ] v1 回归 e2e 通过 + `pnpm build` 无报错
+- [x] v1 回归 e2e 通过 + `vite build` 无报错
 
 ---
 

@@ -2,7 +2,7 @@
 
 > 对应方案文档：[feature-migrate-v2.md](./feature-migrate-v2.md)
 >
-> 更新时间：2026-03-10
+> 更新时间：2026-03-09（第二次更新）
 
 ---
 
@@ -14,7 +14,8 @@
 | **1A**  | Sidebar 重构                | ✅ 完成 | `feature/v2-sidebar`     |
 | **1B**  | Home 视图改造                 | ✅ 完成  | `feature/v2-home`        |
 | **1C**  | Right Side Panel 改造       | ✅ 完成 | `feature/v2-right-panel` |
-| **1D**  | 用户 Profile + Settings 壳   | 🟡 进行中  | `feature/v2-settings`    |
+| **1C+** | Panel 增强（Context tab、preview 交互、composer 简化） | ✅ 完成 | `dev-openwork` |
+| **1D**  | 用户 Profile + Settings 壳   | ✅ 完成 | `feature/v2-settings`    |
 | **1D-W** | 工作目录设置                  | ✅ 完成  | `feature/v2-settings`    |
 | **1D-P** | 模型（供应商）设置              | ✅ 完成  | `feature/v2-settings`    |
 | **2.1** | 定时任务                      | ⬜ 未开始  | —                        |
@@ -105,7 +106,7 @@
 
 ## Phase 1B：Home 视图改造
 
-**分支**：`feature/v2-home` ｜ **依赖**：Phase 0 ｜ **状态**：🟡 进行中
+**分支**：`feature/v2-home` ｜ **依赖**：Phase 0 ｜ **状态**：✅ 完成
 
 ### 改动清单
 
@@ -158,7 +159,7 @@
 
 ## Phase 1D：用户 Profile + Settings 壳
 
-**分支**：`feature/v2-settings` ｜ **依赖**：Phase 0 ｜ **状态**：🟡 进行中
+**分支**：`feature/v2-settings` ｜ **依赖**：Phase 0 ｜ **状态**：✅ 完成
 
 ### 1D.0 基础 UI 壳
 
@@ -205,6 +206,33 @@
 
 ---
 
+## Phase 1C+：Panel 增强 + Composer 简化 + CI 修复
+
+**分支**：`dev-openwork` ｜ **依赖**：Phase 1C ｜ **状态**：✅ 完成
+
+### 改动清单
+
+| 改动 | 文件 | 状态 |
+|------|------|------|
+| Header 布局：标题居中 + 右侧 panel toggle | `session-header_v2.tsx` | ✅ |
+| Portal mount timing 修复（rAF 轮询） | `session_v2.tsx` | ✅ |
+| Preview 中增加「打开文件夹」按钮 | `artifact-preview.tsx`, `session-side-panel_v2.tsx` | ✅ |
+| Preview 打开时隐藏右侧列表面板 | `session-side-panel_v2.tsx` | ✅ |
+| Preview 初始宽度 = session view 对半 | `session-side-panel_v2.tsx` | ✅ |
+| 新增 Context tab（MCP connectors + Skills） | `session-side-panel_v2.tsx` | ✅ |
+| 简化 v2 Composer（隐藏 shell toggle、agent selector、permissions） | `prompt-input.tsx`, `session-composer-region.tsx` | ✅ |
+| i18n 新增 key（openFolder、context tab 相关） | `i18n/en.ts`, `i18n/zh.ts` | ✅ |
+| 新增 e2e 测试（Context tab、tab 切换） | `e2e/v2/side-panel.spec.ts` | ✅ |
+| CI 修复：macOS runner 版本固定 + DMG 手动创建 | `.github/workflows/build.yml` | ✅ |
+
+### 完成门禁
+
+- [x] `e2e/v2/side-panel.spec.ts` — Context tab、三 tab 切换、tab 可见性（3 新增用例）
+- [x] CI build.yml DMG bundling 修复（bypass Tauri bundle_dmg.sh）
+- [x] typecheck 无报错
+
+---
+
 ## Phase 2：全新功能
 
 **依赖**：Phase 1 全部合入 ｜ **状态**：⬜ 未开始
@@ -239,6 +267,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-03-09 | Phase 1C+ 完成：Header 布局优化（标题居中+toggle portal 修复）、Preview 打开文件夹按钮、Preview 隐藏列表面板、Preview 宽度=session 对半、Context tab（MCP+Skills）、v2 Composer 简化（隐藏 shell/agent/permissions）、CI DMG bundling 修复（bypass Tauri bundle_dmg.sh 改用 hdiutil），e2e 3 新增用例 |
 | 2026-03-10 | Phase 1C 完成：Side Panel v2 + Artifact Store + 产物列表 + 多格式预览器 + DirectoryLayoutV2 Provider + i18n + e2e 12 用例（side-panel/artifact-preview/task-execution），修复 artifact-list useArtifact 作用域 bug、artifact-preview srcDoc/FileContent 类型错误 |
 | 2026-03-09 | Phase 1B 完成：Home v2（欢迎+能力卡片+轻量Composer）、workspace-selector、add-menu、GlobalModelSelector（独立模型选择器）、submit→v1 session 导航修复，e2e 12 用例全部通过，typecheck 通过 |
 | 2026-03-09 | Phase 1A 完成：新增 `sidebar-sessions.spec.ts` 功能测试（5 用例：SDK 创建会话、点击导航、多会话列表、归档移除、新建按钮导航），v2 e2e 全部 50 用例通过 |

@@ -29,11 +29,11 @@ jobs:
       matrix:
         settings:
           - platform: macos-intel
-            host: macos-latest
+            host: macos-13
             target: x86_64-apple-darwin
 
           - platform: macos-arm64
-            host: macos-latest
+            host: macos-14
             target: aarch64-apple-darwin
 
           - platform: windows
@@ -112,6 +112,7 @@ jobs:
             --config ./src-tauri/tauri.prod.conf.json
             ${{ matrix.settings.platform == 'linux' && '--bundles deb' || '' }}
             ${{ matrix.settings.platform == 'windows' && '--bundles msi' || '' }}
+            ${{ startsWith(matrix.settings.platform, 'macos') && '--bundles app,dmg' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
